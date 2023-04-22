@@ -1,0 +1,77 @@
+<div style="margin-top: 25px; margin-bottom: 25px;" class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="flex flex-column align-items-center justify-content-center">
+        <div
+            style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
+                <div class="text-center mb-5">
+                    <div class="text-900 text-3xl font-medium mb-3"><img
+                            src="assets/demo/images/login/facturhero-logo.png" alt="Image" height="50" class="mb-3">
+                    </div>
+                    <span class="text-600 font-medium">Create an account to continue to Facturhero</span>
+                </div>
+
+                <form class="form-signin" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                    <div class="grid formgrid">
+                        <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                            <label for="firstname" class="block text-900 text-xl font-medium mb-2">First name</label>
+                            <input id="firstname" formControlName="firstName" type="text" pInputText style="width: 195px;" placeholder="First Name" />
+                        </div>
+                        <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                            <label for="lastname" class="block text-900 text-xl font-medium mb-2">Last name</label>
+                            <input id="lastname" formControlName="lastName" type="text" pInputText style="width: 195px;" placeholder="Last name" />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Company name</label>
+                        <input id="email1" type="text" formControlName="name" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
+                        <input id="email1" type="text" formControlName="email" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">RUC</label>
+                        <input id="email1" type="text" formControlName="userRuc" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Web page</label>
+                        <input id="email1" type="text" formControlName="userWeb" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Phone number</label>
+                        <input id="email1" type="text" formControlName="phone" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="address" class="block text-900 text-xl font-medium mb-2">Address</label>
+                        <textarea id="address" rows="2" cols="62" pInputTextarea [autoResize]="true"
+                            formControlName="address"></textarea>
+                        <br><br>
+                        <!-- <label for="files" class="block text-900 text-xl font-medium mb-2">Files (optional)</label>
+                        <p-card id="files">
+                            <div class="grid formgrid">
+                                <div class="col-4 mb-3 lg:col-5 lg:mb-3">
+                                     <p-fileUpload #fileUpload mode="basic" chooseLabel="Browse logo" [customUpload]="true" (uploadHandler)="chooseLogo($event, fileUpload)" [auto]="true"
+                                        >
+                                    </p-fileUpload><br>
+                                    {{logoName}}
+                                </div>
+                                <div id="signatureKey" class="col-4 mb-3 lg:col-5 lg:mb-3">
+                                    <p-fileUpload #fileUpload2 mode="basic" chooseLabel="Browse key" [customUpload]="true" (uploadHandler)="chooseKey($event, fileUpload2)" [auto]="true"
+                                        pTooltip="A encrypted digital signature, stamp of authentication on digital electronic documents. A signature confirms that the information originated from the signer and has not been altered." tooltipPosition="top">
+                                    </p-fileUpload><br>
+                                    {{keyName}}
+                                </div>
+                            </div>
+                        </p-card><br> -->
+                        <p-password id="password2" formControlName="password" [toggleMask]="true" placeholder="Password"
+                            styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password><br>
+                        <p-password id="password2" formControlName="password_confirmation" [toggleMask]="true"
+                            placeholder="Confirm password" styleClass="mb-5"
+                            inputStyleClass="w-full p-3 md:w-30rem"></p-password>
+
+                        <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                            <a routerLink="/login" class="font-medium no-underline ml-2 text-right cursor-pointer"
+                                style="color: var(--primary-color)">Already have an account? Sign in instead.</a>
+                        </div>
+                        <button pButton pRipple label="Sign Up" type="submit" class="w-full p-3 text-xl"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

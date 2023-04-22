@@ -1,0 +1,40 @@
+{
+	"data": [
+		{
+			"id": "1000",
+			"code": "myPDF",
+			"name": "Wave Accounting",
+			"description": "Product Description",
+			"image": "bamboo-watch.jpg",
+			"price": "FREE",
+			"category": "Accessories",
+			"quantity": 24,
+			"inventoryStatus": "INSTOCK",
+			"rating": 5
+		},
+		{
+			"id": "1001",
+			"code": "myPDF2",
+			"name": "Consulting Success",
+			"description": "Product Description",
+			"image": "black-watch.jpg",
+			"price": "FREE",
+			"category": "Accessories",
+			"quantity": 61,
+			"inventoryStatus": "INSTOCK",
+			"rating": 4
+		},
+		{
+			"id": "1002",
+			"code": "myPDF3",
+			"name": "Uniq",
+			"description": "Product Description",
+			"image": "blue-band.jpg",
+			"price": "FREE",
+			"category": "Fitness",
+			"quantity": 2,
+			"inventoryStatus": "INSTOCK",
+			"rating": 3
+		}
+	]
+}

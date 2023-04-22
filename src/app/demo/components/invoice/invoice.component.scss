@@ -1,0 +1,159 @@
+
+body { overflow-y: scroll; }
+
+.invoice-content h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Poppins', sans-serif;
+    color: #535353;
+}
+
+/** BTN LG **/
+.btn-lg {
+    font-size: 14px;
+    height: 50px;
+    padding: 0 30px;
+    line-height: 50px;
+    border-radius: 3px;
+    color: #ffffff;
+    border: none;
+    margin: 0 3px 3px;
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-appearance: none;
+    text-transform: capitalize;
+    transition: all 0.3s linear;
+    z-index: 1;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.btn-lg:hover {
+    color: #ffffff;
+}
+
+.btn-lg:hover:after {
+    transform: perspective(200px) scaleX(1.05) rotateX(0deg) translateZ(0);
+    transition: transform 0.9s linear, transform 0.4s linear;
+}
+
+.btn-lg:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    content: "";
+    transform: perspective(200px) scaleX(0.1) rotateX(90deg) translateZ(-10px);
+    transform-origin: bottom center;
+    transition: transform 0.9s linear, transform 0.4s linear;
+    z-index: -1;
+}
+
+.btn-check:focus+.btn, .btn:focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+.btn-print{
+    background-image: linear-gradient(to bottom, #54544d, #1a1918);
+}
+
+.btn-print:after {
+    background-image: linear-gradient(to bottom, #1a1918, #54544d);
+}
+
+
+
+table th{
+    font-weight: 400;
+}
+
+.btn-download {
+    background: #3965e3;
+}
+
+.btn-download:after {
+    background: #325cd5;
+}
+
+.btn-print{
+    background: #3a3939;
+}
+
+.btn-print:after {
+    background: #1d1c1c;
+}
+
+
+
+/** MEDIA **/
+
+
+.invoice-header {
+        border-radius: 75px 0 0 75px;
+        z-index: 0;
+        background-image: linear-gradient(to bottom, #ff0000, #ff8100);
+        display: grid;
+        grid-template-columns: 55% 45%;
+        .logo {
+            max-width: 130px;
+            margin: 40px 0 0 80px;
+        }
+        .info {
+            max-width: 200px;
+            margin: 0 50px 0 auto;
+            padding: 34px 0;
+            color: #fff!important;
+            h1 {
+                color: #fff;
+            }
+            span {
+                float: right;
+            }
+        }
+}
+
+.tr2 {
+    display: grid;
+    grid-template-columns: 55% 45%;
+    margin: 15px;
+}
+
+.inv-title-1{
+    color: #ff3200;
+    margin-bottom: 5px;
+}
+
+.invoice-contact::after {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30%;
+    height: 30px;
+    border-radius: 15px 0 0 15px;
+    z-index: 0;
+    background-image: linear-gradient(to bottom, #ff0000, #ff8100);
+}
+
+.contact-info {
+    padding: 30px;
+    border-radius: 0;
+}
+
+.contact-info {
+    padding: 30px 50px;
+    border-radius: 0 40px 40px 0;
+    background-image: linear-gradient(to bottom, #f3f3f3, #ffffff);
+}
+
+.contact-info a {
+    margin-right: 20px;
+    color: #535353;
+    font-size: 14px;
+}
+
+.invoice-btn-section {
+    text-align: center;
+    margin-top: 27px;
+    margin-bottom: 15px;
+}

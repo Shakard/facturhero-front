@@ -1,0 +1,331 @@
+<div class="card">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="openNewOffer()"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <div *ngIf="selectedClient?.ruc">
+        <p-card header="Client" [style]="{ width: 'auto' }">
+            <table class="clientInfo">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                </tr>
+                <tr>
+                    <td>{{ selectedClient?.ruc }}</td>
+                    <td>{{ selectedClient?.razon_social }}</td>
+                    <td>{{ selectedClient?.telefono }}</td>
+                    <td>{{ selectedClient?.direccion }}</td>
+                    <td>{{ selectedClient?.correo }}</td>
+                </tr>
+            </table>
+        </p-card>
+    </div>
+
+    <form [formGroup]="formOffer" (submit)="onSubmitOffer()">
+        <p-card>
+            <div class="card-body">
+                <div formArrayName="details">
+                    <p-table [value]="details.controls">
+                        <ng-template pTemplate="header">
+                            <tr class="tr">
+                                <th>
+                                    <button pButton pRipple type="button" icon="pi pi-plus"
+                                        class="p-button-rounded p-button-success" style="width: 25px; height: 25px"
+                                        (click)="openNewProduct()"></button>
+                                </th>
+                                <th class="pl0 text-start">Product Id</th>
+                                <th class="text-center">Item Description</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Price</th>
+                                <th class="text-center">Discount</th>
+                                <th class="text-center">Total with discount</th>
+                                <th class="text-center">
+                                    Total without discount
+                                </th>
+                                <!-- <th class="text-end">Amount</th> -->
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-controls let-i="rowIndex">
+                            <tr [formGroupName]="i">
+                                <!-- <tr *ngFor="let detail of details.controls; let i = index" class="tr" [formGroupName]="i"> -->
+                                <td>
+                                    <button pButton pRipple type="button" icon="pi pi-times"
+                                        class="p-button-rounded p-button-danger" style="width: 25px; height: 25px"
+                                        (click)="removeDetail(i)"></button>
+                                </td>
+                                <td class="pl0">
+                                    {{
+                                    this.details.at(i).get("productId")
+                                    .value
+                                    }}
+                                    <!-- <input type="text" formControlName="item" style="width: 150px;"
+                                        oninput="this.size = this.value.length" /> -->
+                                </td>
+                                <td class="text-center">
+                                    {{ this.details.at(i).get("item").value }}
+                                    <!-- <input type="text" formControlName="item" style="width: 150px;"
+                                        oninput="this.size = this.value.length" /> -->
+                                </td>
+                                <td class="text-center">
+                                    <!-- <input type="text" formControlName="quantity" (change)="setQuantity($event, i)"
+                                        style="width: 50px" /> -->
+                                    <p-inputNumber formControlName="quantity" [showButtons]="true"[size]="1" ></p-inputNumber>
+                                </td>
+                                <td class="text-center">
+                                    ${{ this.details.at(i).get("price").value }}
+                                    <!-- <input type="text" formControlName="price" (change)="setPrice($event, i)"
+                                        style="width: 100px;" /> -->
+                                </td>
+                                <td class="text-center">
+                                    <!-- <input type="text" sufix="%" formControlName="discount" style="width: 50px" /> -->
+                                    <p-inputNumber  formControlName="discount" suffix="%" [size]="3"></p-inputNumber>
+                                </td>
+                                <td class="text-center">
+                                    ${{this.details.at(i).get("price").value * this.details.at(i).get("quantity").value - (this.details.at(i).get("discount").value / 100) * (this.details.at(i).get("price").value * this.details.at(i).get("quantity").value) | number : "1.0-2"}}
+                                    <!-- <input type="text" formControlName="price" (change)="setPrice($event, i)"
+                                        style="width: 100px;" /> -->
+                                </td>
+                                <td class="text-center">
+                                    ${{this.details.at(i).get("price").value * this.details.at(i).get("quantity").value | number : "1.0-2"}}
+                                    <!-- <input type="text" formControlName="price" (change)="setPrice($event, i)"
+                                        style="width: 100px;" /> -->
+                                </td>
+                                <!-- <td class="text-end">${{this.details.at(i).get('amount').value}}
+                                </td> -->
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <div style="
+                                    display: grid;
+                                    grid-template-columns: 70% 30%;
+                                    align-items: end;
+                                ">
+                                <div></div>
+                                <div *ngIf="total">
+                                    <tr class="tr2">
+                                        <td>SubTotal</td>
+                                        <td class="text-end">
+                                            ${{ subTotal }}
+                                        </td>
+                                    </tr>
+                                    <tr class="tr2">
+                                        <td>Tax 12%</td>
+                                        <td class="text-end">${{ tax }}</td>
+                                    </tr>
+                                    <tr class="tr2" style="color: #ff3200">
+                                        <td>Grand Total</td>
+                                        <td class="f-w-600 text-end active-color">
+                                            ${{ total }}
+                                        </td>
+                                    </tr>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div style="margin-top: 10px"></div>
+            </div>
+        </p-card>
+    </form>
+
+    <p-table #dt [value]="offers" [rows]="10" [paginator]="true" [tableStyle]="{ 'min-width': '75rem' }"
+        [(selection)]="selectedOffers" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Manage Offers</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 5rem"></th>
+                <th style="min-width: 15rem">Offer Number</th>
+                <th style="min-width: 15rem">Client Name</th>
+                <th style="min-width: 15rem">Client Phone</th>
+                <th style="min-width: 15rem">Client Address</th>
+                <th style="min-width: 15rem">Subtotal</th>
+                <th style="min-width: 15rem">Tax</th>
+                <th style="min-width: 15rem">total</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-offer let-expanded="expanded">
+            <tr>
+                <td>
+                    <button type="button" pButton pRipple [pRowToggler]="offer"
+                        class="p-button-text p-button-rounded p-button-plain" [icon]="
+                            expanded
+                                ? 'pi pi-chevron-down'
+                                : 'pi pi-chevron-right'
+                        "></button>
+                </td>
+                <td>{{ offer.offer_number }}</td>
+                <td>{{ offer.client.razon_social }}</td>
+                <td>{{ offer.client.telefono }}</td>
+                <td>{{ offer.client.direccion }}</td>
+                <td>{{ offer.subtotal }}</td>
+                <td>{{ offer.tax }}%</td>
+                <td>{{ offer.total }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-offer>
+            <tr>
+                <td colspan="7">
+                    <div class="p-3">
+                        <p-table [value]="offer.offer_details" dataKey="id">
+                            <ng-template pTemplate="header">
+            <tr>
+                <th>Quantity</th>
+                <th>Product</th>
+                <th>Unit Price</th>
+                <th>discount</th>
+                <th>Total without discount</th>
+                <th>Total with discount</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-detail>
+            <tr>
+                <td>{{ detail.quantity }}</td>
+                <td>{{ detail.product.descripcion }}</td>
+                <td>
+                    {{ detail.price | number : "1.0-2" }}$
+                </td>
+                <td>
+                    {{ detail.discount }}% ({{
+                    (detail.discount / 100) *
+                    (detail.price * detail.quantity)
+                    | number : "1.0-2"
+                    }}$)
+                </td>
+                <td>
+                    {{
+                    detail.price * detail.quantity
+                    | number : "1.0-2"
+                    }}$
+                </td>
+                <td>
+                    {{
+                    detail.price * detail.quantity -
+                    (detail.discount / 100) *
+                    (detail.price *
+                    detail.quantity)
+                    | number : "1.0-2"
+                    }}$
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">
+                    There are no products for this offer
+                    yet.
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+</td>
+</tr>
+</ng-template>
+<ng-template pTemplate="summary">
+    <div class="flex align-items-center justify-content-between">
+        In total there are {{ offers ? offers.length : 0 }} offers.
+    </div>
+</ng-template>
+</p-table>
+</div>
+
+<p-dialog [(visible)]="offerDialog" [style]="{ width: 'auto' }" header="Product Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <p-table #dt [value]="clients" [rows]="5" [paginator]="true" [tableStyle]="{ 'min-width': '75rem' }"
+            [rowHover]="true" dataKey="id" [(selection)]="selectedOffer" selectionMode="single"
+            (onRowSelect)="onRowSelect($event)"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [showCurrentPageReport]="true" [globalFilterFields]="['razon_social', 'ruc']">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
+                            placeholder="Search..." />
+                    </span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="min-width: 15rem">Ruc or Identification</th>
+                    <th style="min-width: 15rem">Name or Business</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-client>
+                <tr [pSelectableRow]="client">
+                    <td>{{ client.ruc }}</td>
+                    <td>{{ client.razon_social }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
+        <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formClient.valid"></button> -->
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()"
+            [disabled]="!formOffer.valid"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="productDialog" [style]="{ width: 'auto' }" header="Product Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <p-table #dt [value]="products" [rows]="5" [paginator]="true" [tableStyle]="{ 'min-width': '75rem' }"
+            [rowHover]="true" dataKey="id" [(selection)]="selectedProduct" selectionMode="single"
+            (onRowSelect)="onRowSelectProduct($event)"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [showCurrentPageReport]="true" [globalFilterFields]="['codigo', 'descripcion']">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
+                            placeholder="Search..." />
+                    </span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="min-width: 15rem">Code</th>
+                    <th style="min-width: 15rem">Item</th>
+                    <th style="min-width: 15rem">Quantity</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr [pSelectableRow]="product">
+                    <td>{{ product.codigo }}</td>
+                    <td>{{ product.descripcion }}</td>
+                    <td>{{ product.cantidad }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" (click)="productDialog = false" icon="pi pi-times"
+            class="p-button-text"></button>
+        <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formClient.valid"></button> -->
+    </ng-template>
+</p-dialog>

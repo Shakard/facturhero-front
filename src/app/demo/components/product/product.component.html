@@ -1,0 +1,89 @@
+<div class="card">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <!-- <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="openNew()"></button> -->
+            <button pButton pRipple label="Add product" icon="pi pi-plus" class="w-full p-3 text-md" (click)="openNew()"></button>
+            <!-- <button pButton pRipple icon="pi pi-trash" class="p-button-danger"></button> -->
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="products" [rows]="10" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
+        [(selection)]="selectedProducts" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Manage Products</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:15rem">Code </th>
+                <th style="min-width:15rem">Item </th>
+                <th style="min-width:15rem">Cuantity </th>
+                <th style="min-width:15rem">Price </th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td>{{product.codigo}}</td>
+                <td>{{product.descripcion}}</td>
+                <td>{{product.cantidad}}</td>
+                <td>{{product.precio_venta}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2" (click)="openEditProduct(product)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded"(click)="deleteProduct(product)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                In total there are {{products ? products.length : 0 }} products.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="formProduct" (ngSubmit)="submit()">
+            <br>
+
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="code">
+                    <label for="float-input">Code</label>
+                </span>
+
+               <br>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="item">
+                    <label for="float-input">Product Name</label>
+                </span>
+
+                <br>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="quantity">
+                    <label for="float-input">Quantity</label>
+                </span>
+
+               <br>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="price">
+                    <label for="float-input">Price</label>
+                </span>
+
+            <!-- <button class="btn btn-primary" type="submit" [disabled]="!formProduct.valid">Save</button> -->
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formProduct.valid"></button>
+    </ng-template>
+</p-dialog>

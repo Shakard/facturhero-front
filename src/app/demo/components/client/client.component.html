@@ -1,0 +1,95 @@
+<div class="card">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="Add new client" icon="pi pi-plus" class="w-full p-3 text-md"
+                (click)="openNew()"></button>
+            <!-- <button pButton pRipple icon="pi pi-trash" class="p-button-danger"></button> -->
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="clients" [rows]="10" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
+        [(selection)]="selectedClients" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Manage Clients</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:15rem">Ruc or Identification </th>
+                <th style="min-width:15rem">Name or Business </th>
+                <th style="min-width:15rem">Phone </th>
+                <th style="min-width:15rem">Address </th>
+                <th style="min-width:15rem">Email </th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-client>
+            <tr>
+                <td>{{client.ruc}}</td>
+                <td>{{client.razon_social}}</td>
+                <td>{{client.telefono}}</td>
+                <td>{{client.direccion}}</td>
+                <td>{{client.correo}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2" (click)="openEditClient(client)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded" (click)="deleteClient(client)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                In total there are {{clients ? clients.length : 0 }} clients.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="clientDialog" [style]="{width: '450px'}" header="Client Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="formClient" (ngSubmit)="submit()">
+            <br>
+
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="ruc">
+                    <label for="float-input">RUC or Identification</label>
+                </span>
+
+               <br>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="name">
+                    <label for="float-input">Client or Business Name</label>
+                </span>
+
+                <br>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="phone">
+                    <label for="float-input">Phone Number</label>
+                </span>
+
+               <br>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="address">
+                    <label for="float-input">Address</label>
+                </span>
+                <br>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText formControlName="email">
+                    <label for="float-input">Email</label>
+                </span>
+
+            <!-- <button class="btn btn-primary" type="submit" [disabled]="!formProduct.valid">Save</button> -->
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formClient.valid"></button>
+    </ng-template>
+</p-dialog>

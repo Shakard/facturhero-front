@@ -1,0 +1,74 @@
+<div style="margin-top: 25px; margin-bottom: 25px;">
+    <div class="flex flex-column align-items-center justify-content-center">
+        <div>
+            <div class="w-full surface-card py-8 px-5 sm:px-8">
+                <div class="text-center mb-5">
+                    <div class="text-900 text-3xl font-medium mb-3">
+                        <!-- <img src="assets/demo/images/login/facturhero-logo.png" alt="Image" height="50" class="mb-3"> -->
+                       <b>User Profile</b>
+                    </div><br>
+                    <!-- <span class="text-600 font-medium">Create an account to continue to Facturhero</span> -->
+                </div>
+
+                <form class="form-signin" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                    <!-- <label for="userLogo" class="block text-900 text-xl font-medium mb-2">Logo</label> -->
+                    <img style="max-width: 125px;" id="userLogo"
+                        src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}' alt="No logo " />
+                    <p-fileUpload #fileUpload mode="basic" chooseLabel="Browse logo" [customUpload]="true"
+                        (uploadHandler)="chooseLogo($event, fileUpload)" [auto]="true">
+                    </p-fileUpload><br>
+                    {{logoName}}
+                    <br><br>
+                    <div class="grid formgrid">
+                        <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                            <label for="firstname" class="block text-900 text-xl font-medium mb-2">First name</label>
+                            <input id="firstname" formControlName="firstName" type="text" pInputText
+                                style="width: 195px;" placeholder="First Name" />
+                        </div>
+                        <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                            <label for="lastname" class="block text-900 text-xl font-medium mb-2">Last name</label>
+                            <input id="lastname" formControlName="lastName" type="text" pInputText style="width: 195px;"
+                                placeholder="Last name" />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Company name</label>
+                        <input id="email1" type="text" formControlName="name" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
+                        <input id="email1" type="text" formControlName="email" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">RUC</label>
+                        <input id="email1" type="text" formControlName="userRuc" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Web page</label>
+                        <input id="email1" type="text" formControlName="userWeb" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Phone number</label>
+                        <input id="email1" type="text" formControlName="phone" placeholder="Email address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem">
+                        <label for="address" class="block text-900 text-xl font-medium mb-2">Address</label>
+                        <textarea id="address" rows="2" cols="62" pInputTextarea [autoResize]="true"
+                            formControlName="address"></textarea>
+                        <br><br>
+                        <label for="files" class="block text-900 text-xl font-medium mb-2">Files (optional)</label>
+                        <!-- <div id="signatureKey" class="col-4 mb-3 lg:col-5 lg:mb-3"> -->
+                            <p-fileUpload #fileUpload2 mode="basic" chooseLabel="Browse key" [customUpload]="true"
+                                (uploadHandler)="chooseKey($event, fileUpload2)" [auto]="true"
+                                pTooltip="A encrypted digital signature, stamp of authentication on digital electronic documents. A signature confirms that the information originated from the signer and has not been altered."
+                                tooltipPosition="top">
+                            </p-fileUpload><br>
+                            {{keyName}}
+                            <br>
+                            <!-- <div class="tooltip">A encrypted digital signature, stamp of authentication on digital electronic documents. A signature confirms that the information originated from the signer and has not been altered. To purchase a verified signature please use one of the links below </div> -->
+                        <!-- </div> -->
+
+
+                        <br>
+                        <button pButton pRipple label="Sign Up" type="submit" class="w-full p-3 text-xl"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
