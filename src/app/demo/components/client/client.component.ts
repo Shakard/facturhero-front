@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Client } from '../../api/client';
 import { ClientService } from '../../service/client.service';
 import Swal from 'sweetalert2';
+import { Province } from '../../api/province';
+import { ProvinceService } from '../../service/province.service';
 
 @Component({
     selector: 'app-client',
@@ -16,14 +18,18 @@ export class ClientComponent {
     clientId: any;
     selectedClients: Client[];
     submitted: boolean;
+    provinces: Province[];
     statuses: any[];
+    cantons: any[];
+    editingClient: boolean;
 
     formClient: FormGroup;
 
-    constructor(private clientService: ClientService) { }
+    constructor(private clientService: ClientService, private provinceService: ProvinceService) { }
 
     ngOnInit() {
         this.getClients();
+        this.getProvinces();
         this.buildFormClient();
     }
 
@@ -34,13 +40,27 @@ export class ClientComponent {
         });
     }
 
+    getProvinces() {
+        this.provinceService.getProvinces().then(data => {
+            this.provinces = data.data,
+                console.log(this.provinces);
+        });
+    }
+
     buildFormClient() {
         this.formClient = new FormGroup({
             ruc: new FormControl('', Validators.required),
             name: new FormControl('', Validators.required),
             phone: new FormControl('', Validators.required),
+            country: new FormControl(''),
+            province: new FormControl('', Validators.required),
+            canton: new FormControl('', Validators.required),
             address: new FormControl('', Validators.required),
-            email: new FormControl('', Validators.required)
+            addressDetail: new FormControl('', Validators.required),
+            zipCode: new FormControl('', Validators.required),
+            email: new FormControl('', Validators.required),
+            userId: new FormControl(''),
+            addressId: new FormControl('')
         });
     }
 
@@ -52,6 +72,7 @@ export class ClientComponent {
         this.client = {};
         this.formClient.reset();
         this.submitted = false;
+        this.editingClient = false;
         this.clientDialog = true;
     }
 
@@ -65,9 +86,17 @@ export class ClientComponent {
         this.formClient.patchValue({ ruc: client.ruc });
         this.formClient.patchValue({ name: client.razon_social });
         this.formClient.patchValue({ phone: client.telefono });
-        this.formClient.patchValue({ address: client.direccion });
+        this.formClient.patchValue({ country: 'ECUADOR' });
+        this.formClient.patchValue({ province: client.address.province });
+        this.formClient.patchValue({ canton: client.address.city });
+        this.formClient.patchValue({ address: client.address.line1 });
+        this.formClient.patchValue({ addressDetail: client.address.line2 });
+        this.formClient.patchValue({ zipCode: client.address.zip });
         this.formClient.patchValue({ email: client.correo });
+        this.formClient.patchValue({ addressId: client.address.id });
+        this.getCantons(client.address.province);
         this.clientDialog = true;
+        this.editingClient = true;
     }
 
     deleteClient(client: Client) {
@@ -90,6 +119,9 @@ export class ClientComponent {
     }
 
     newClient() {
+        const userId = localStorage.getItem('id');
+        this.formClient.patchValue({ country: 'ECUADOR' });
+        this.formClient.patchValue({ userId: userId });
         console.log(this.formClient.value);
         this.clientService.createClient(this.formClient.value).subscribe(res => {
             console.log('client created successfully!');
@@ -155,5 +187,26 @@ export class ClientComponent {
             confirmButtonText: "Ok",
             confirmButtonColor: "#0B253A",
         });
+    }
+
+    onChangeProvince(province: string) {
+        // console.log(this.details.at(i).get("tax").value);
+        // console.log(this.registerForm.value);
+        this.getCantons(province);
+    }
+
+    getCantons(provincia: string) {
+        this.provinceService.getProvinces().then((res: any) => {
+            this.cantons = res.data!.filter((data:any) => data.provincia == provincia);
+            if (this.cantons[0]) {
+                this.cantons = this.cantons[0].cantones;
+                console.log(this.cantons);
+            }
+
+      });
+    }
+
+    onChangeCanton() {
+        console.log(this.formClient.value);
     }
 }

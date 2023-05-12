@@ -41,6 +41,7 @@ import { InvoiceTemplateComponent } from './demo/components/invoice-template/inv
 import { CarouselModule } from 'primeng/carousel';
 import { InvoiceTemplateService } from './demo/service/invoice-template.service';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { ProvinceService } from './demo/service/province.service';
 
 
 
@@ -87,7 +88,8 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, ClientService, OfferService, InvoiceTemplateService
+        PhotoService, ProductService, ClientService, OfferService, InvoiceTemplateService,
+        ProvinceService
     ],
     bootstrap: [AppComponent]
 })

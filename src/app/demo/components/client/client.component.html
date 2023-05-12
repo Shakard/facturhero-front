@@ -24,6 +24,7 @@
                 <th style="min-width:15rem">Ruc or Identification </th>
                 <th style="min-width:15rem">Name or Business </th>
                 <th style="min-width:15rem">Phone </th>
+                <th style="min-width:15rem">City </th>
                 <th style="min-width:15rem">Address </th>
                 <th style="min-width:15rem">Email </th>
                 <th></th>
@@ -34,11 +35,15 @@
                 <td>{{client.ruc}}</td>
                 <td>{{client.razon_social}}</td>
                 <td>{{client.telefono}}</td>
-                <td>{{client.direccion}}</td>
+                <td>{{client.address.city}}</td>
+                <td>{{client.address.line1}}</td>
                 <td>{{client.correo}}</td>
                 <td>
-                    <button pButton pRipple icon="pi pi-pencil" style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2" (click)="openEditClient(client)"></button>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded" (click)="deleteClient(client)"></button>
+                    <button pButton pRipple icon="pi pi-pencil"
+                        style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2"
+                        (click)="openEditClient(client)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded"
+                        (click)="deleteClient(client)"></button>
                 </td>
             </tr>
         </ng-template>
@@ -56,33 +61,71 @@
         <form [formGroup]="formClient" (ngSubmit)="submit()">
             <br>
 
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="ruc">
-                    <label for="float-input">RUC or Identification</label>
-                </span>
+            <span class="p-float-label">
+                <input id="float-input" type="text" pInputText formControlName="ruc">
+                <label for="float-input">RUC or Identification</label>
+            </span>
 
-               <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="name">
-                    <label for="float-input">Client or Business Name</label>
-                </span>
+            <br>
+            <span class="p-float-label">
+                <input id="float-input" type="text" pInputText formControlName="name">
+                <label for="float-input">Client or Business Name</label>
+            </span>
 
-                <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="phone">
-                    <label for="float-input">Phone Number</label>
-                </span>
+            <br>
+            <span class="p-float-label">
+                <input id="float-input" type="text" pInputText formControlName="phone">
+                <label for="float-input">Phone Number</label>
+            </span>
 
-               <br>
-                <span class="p-float-label">
+            <br>
+            <!-- <span class="p-float-label">
                     <input id="float-input" type="text" pInputText formControlName="address">
                     <label for="float-input">Address</label>
-                </span>
-                <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="email">
-                    <label for="float-input">Email</label>
-                </span>
+                </span> -->
+            <label for="address1" class="block text-900 text-xl font-medium mb-2">Address</label>
+            <div class="grid formgrid">
+                <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                    <p-dropdown [options]="provinces" optionLabel="provincia" formControlName="province"
+                        optionValue="provincia" (onChange)="onChangeProvince(this.formClient.get('province').value)"
+                        [filter]="true" filterBy="provincia" [showClear]="true" placeholder="Select a Province">
+                        <ng-template pTemplate="selectedItem">
+                            <div class="flex align-items-center gap-2" *ngIf="this.formClient.get('province')">
+                                <div>{{ this.formClient.get('province').value }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                    <p-dropdown *ngIf="cantons?.length>0 || editingClient" [options]="cantons" optionLabel="canton"
+                        formControlName="canton" optionValue="canton" (onChange)="onChangeCanton()" [filter]="true"
+                        filterBy="canton" [showClear]="true" placeholder="Select a City">
+                        <ng-template pTemplate="selectedItem">
+                            <div class="flex align-items-center gap-2" *ngIf="this.formClient.get('canton')">
+                                <div>{{ this.formClient.get('canton').value }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+
+            </div>
+            <span class="p-float-label">
+                <input id="address1" type="text" pInputText formControlName="address" placeholder="Address">
+                <label for="float-input">Line 1</label>
+            </span><br>
+            <span class="p-float-label">
+                <input id="address2" type="text" pInputText formControlName="addressDetail" placeholder="Address details">
+                <label for="float-input">Line 1</label>
+            </span><br>
+            <span class="p-float-label">
+                <input id="zip" type="text" pInputText formControlName="zipCode" placeholder="ZIP Code">
+                <label for="float-input">Zip Code</label>
+            </span>
+            <br>
+            <span class="p-float-label">
+                <input id="float-input" type="text" pInputText formControlName="email">
+                <label for="float-input">Email</label>
+            </span>
 
             <!-- <button class="btn btn-primary" type="submit" [disabled]="!formProduct.valid">Save</button> -->
         </form>
@@ -90,6 +133,7 @@
 
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formClient.valid"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()"
+            [disabled]="!formClient.valid"></button>
     </ng-template>
 </p-dialog>

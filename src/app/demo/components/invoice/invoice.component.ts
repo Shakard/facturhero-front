@@ -68,13 +68,22 @@ export class InvoiceComponent implements OnInit {
             userName: [null, Validators.required],
             userRuc: [null, Validators.required],
             userWeb: [null, Validators.required],
+            userEmail: [null, Validators.required],
             userPhone: [null, Validators.required],
-            userAddress: [null, Validators.required],
+            userProvince: [null, Validators.required],
+            userCity: [null, Validators.required],
+            userLine1: [null, Validators.required],
+            userLine2: [null],
+            userZipCode: [null],
             userLogo: [null, Validators.required],
             clientId: [null, Validators.required],
             clientName: [null, Validators.required],
             clientMail: [null, Validators.required],
-            clientAddress: [null, Validators.required],
+            clientProvince: [null, Validators.required],
+            clientCity: [null, Validators.required],
+            clientLine1: [null, Validators.required],
+            clientLine2: [null],
+            clientZipCode: [null],
             clientPhone: [null, Validators.required],
             fechaEmicion: [this.currentDate, Validators.required],
             details: this.formBuilder.array([]),
@@ -225,7 +234,9 @@ export class InvoiceComponent implements OnInit {
         this.formInvoice.patchValue({ subTotal: this.subTotal });
         this.formInvoice.patchValue({ tax: this.tax });
         this.formInvoice.patchValue({ total: this.total });
-        this.signInvoice(this.formInvoice.value);
+        // this.signInvoice(this.formInvoice.value);
+        console.log(this.formInvoice.value);
+
     }
 
     onSubmitStore() {
@@ -240,6 +251,8 @@ export class InvoiceComponent implements OnInit {
         this.formInvoice.patchValue({ tax: this.tax });
         this.formInvoice.patchValue({ total: this.total });
         this.previewInvoice(this.formInvoice.value);
+        console.log(this.formInvoice.value);
+
     }
 
     openNew() {
@@ -266,8 +279,12 @@ export class InvoiceComponent implements OnInit {
         this.formInvoice.patchValue({ clientId: event.data.id });
         this.formInvoice.patchValue({ clientName: event.data.razon_social });
         this.formInvoice.patchValue({ clientMail: event.data.correo });
-        this.formInvoice.patchValue({ clientAddress: event.data.direccion });
         this.formInvoice.patchValue({ clientPhone: event.data.telefono });
+        this.formInvoice.patchValue({ clientProvince: event.data.address.province });
+        this.formInvoice.patchValue({ clientCity: event.data.address.city });
+        this.formInvoice.patchValue({ clientLine1: event.data.address.line1 });
+        this.formInvoice.patchValue({ clientLine2: event.data.address.line2 });
+        this.formInvoice.patchValue({ clientZipCode: event.data.address.zip });
         this.clientDialog = false;
     }
 
@@ -314,6 +331,7 @@ export class InvoiceComponent implements OnInit {
             quantity: 1,
             amount: amount,
             totalBase: '',
+            discountText: '',
             discount: 0,
             detailedDiscount: '',
             totalWithDiscount: '',
@@ -393,13 +411,43 @@ export class InvoiceComponent implements OnInit {
     }
 
     getDetailedDiscount(i: any) {
-        const price = this.details.at(i).get("price").value;
-        const quantity = this.details.at(i).get("quantity").value;
-        const discount = this.details.at(i).get("discount").value / 100;
-        const subtotal = price * quantity;
-        const total = discount * subtotal;
-        this.details.at(i).get('detailedDiscount').setValue(total);
-        return total;
+        var discountTextField = this.details.at(i).get("discountText").value;
+        var discountTextField = discountTextField.toString();
+        if (discountTextField.includes('%')) {
+            const discountValue = discountTextField.replace(/\D/g,'');
+            const price = this.details.at(i).get("price").value;
+            const quantity = this.details.at(i).get("quantity").value;
+            const discount = discountValue / 100;
+            const subtotal = price * quantity;
+            const total = discount * subtotal;
+            this.details.at(i).get('detailedDiscount').setValue(total);
+            this.details.at(i).get("discount").setValue(discountValue);
+
+            return total;
+        } else {
+            const discount = this.details.at(i).get("discountText").value;
+            const totalBase = this.details.at(i).get('totalBase').value;
+            const total = (discount / totalBase) * 100;
+            this.details.at(i).get('detailedDiscount').setValue(discount);
+            this.details.at(i).get("discount").setValue(total);
+            return total
+        }
+        // const price = this.details.at(i).get("price").value;
+        // const quantity = this.details.at(i).get("quantity").value;
+        // const discount = this.details.at(i).get("discount").value / 100;
+        // const subtotal = price * quantity;
+        // const total = discount * subtotal;
+        // this.details.at(i).get('detailedDiscount').setValue(total);
+        // console.log(discount);
+        // return total;
+
+        // const discount = this.details.at(i).get("discountText").value;
+        // const totalBase = this.details.at(i).get('totalBase').value;
+        // const total = (discount / totalBase) * 100;
+        // this.details.at(i).get('detailedDiscount').setValue(discount);
+        // this.details.at(i).get("discount").setValue(total);
+        // return total
+
     }
 
     getTotalWithoutTax(i: any) {
@@ -497,17 +545,23 @@ export class InvoiceComponent implements OnInit {
     }
 
     getLoggedUser() {
-        this.authService.getLoggedUser()
+        const userId = localStorage.getItem('id');
+        this.authService.getLoggedUserWIthAddress([userId])
             .subscribe(response => {
                 const res: any = response;
-                console.log(res.data);
-                this.user = res.data;
+                console.log(res.data[0]);
+                this.user = res.data[0];
                 this.formInvoice.patchValue({ userId: this.user.id });
                 this.formInvoice.patchValue({ userName: this.user.name });
+                this.formInvoice.patchValue({ userEmail: this.user.email });
                 this.formInvoice.patchValue({ userRuc: this.user.user_ruc });
                 this.formInvoice.patchValue({ userWeb: this.user.user_web });
                 this.formInvoice.patchValue({ userPhone: this.user.phone });
-                this.formInvoice.patchValue({ userAddress: this.user.address });
+                this.formInvoice.patchValue({ userProvince: this.user.address.province });
+                this.formInvoice.patchValue({ userCity: this.user.address.city });
+                this.formInvoice.patchValue({ userLine1: this.user.address.line1 });
+                this.formInvoice.patchValue({ userLine2: this.user.address.line2 });
+                this.formInvoice.patchValue({ userZipCode: this.user.address.zip });
                 this.formInvoice.patchValue({ userLogo: this.user.logo });
             },
                 (error) => {
@@ -536,14 +590,14 @@ export class InvoiceComponent implements OnInit {
         });
     }
 
-    invoiceSentAlert(){
+    invoiceSentAlert() {
         Swal.fire({
-             title: "Invoice sent!",
-             showCancelButton: false,
-             confirmButtonText: "Ok",
-             confirmButtonColor: "#0B253A",
-           });
-      }
+            title: "Invoice sent!",
+            showCancelButton: false,
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#0B253A",
+        });
+    }
     // signInvoice() {
     //   console.log(this.formInvoice.value);
 
@@ -556,7 +610,7 @@ export class InvoiceComponent implements OnInit {
     //     }
     //   );
     // }
-    onChangeTax(i:any) {
+    onChangeTax(i: any) {
         // console.log(this.details.at(i).get("tax").value);
         console.log(this.formInvoice.value);
 

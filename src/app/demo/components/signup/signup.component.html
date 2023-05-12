@@ -1,4 +1,5 @@
-<div style="margin-top: 25px; margin-bottom: 25px;" class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+<div style="margin-top: 25px; margin-bottom: 25px;"
+    class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
     <div class="flex flex-column align-items-center justify-content-center">
         <div
             style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
@@ -14,32 +15,72 @@
                     <div class="grid formgrid">
                         <div class="col-6 mb-3 lg:col-6 lg:mb-3">
                             <label for="firstname" class="block text-900 text-xl font-medium mb-2">First name</label>
-                            <input id="firstname" formControlName="firstName" type="text" pInputText style="width: 195px;" placeholder="First Name" />
+                            <input id="firstname" formControlName="firstName" type="text" pInputText
+                                style="width: 195px;" placeholder="First Name" />
                         </div>
                         <div class="col-6 mb-3 lg:col-6 lg:mb-3">
                             <label for="lastname" class="block text-900 text-xl font-medium mb-2">Last name</label>
-                            <input id="lastname" formControlName="lastName" type="text" pInputText style="width: 195px;" placeholder="Last name" />
+                            <input id="lastname" formControlName="lastName" type="text" pInputText style="width: 195px;"
+                                placeholder="Last name" />
                         </div>
                     </div>
                     <div>
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Company name</label>
-                        <input id="email1" type="text" formControlName="name" placeholder="Email address" pInputText
+                        <label for="cname" class="block text-900 text-xl font-medium mb-2">Company name</label>
+                        <input id="cname" type="text" formControlName="name" placeholder="Company name" pInputText
                             class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                        <input id="email1" type="text" formControlName="email" placeholder="Email address" pInputText
+                        <label for="email" class="block text-900 text-xl font-medium mb-2">Email</label>
+                        <input id="email" type="text" formControlName="email" placeholder="Email address" pInputText
                             class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">RUC</label>
-                        <input id="email1" type="text" formControlName="userRuc" placeholder="Email address" pInputText
+                        <label for="ruc" class="block text-900 text-xl font-medium mb-2">RUC</label>
+                        <input id="ruc" type="text" formControlName="userRuc" placeholder="RUC" pInputText
                             class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Web page</label>
-                        <input id="email1" type="text" formControlName="userWeb" placeholder="Email address" pInputText
+                        <label for="web-page" class="block text-900 text-xl font-medium mb-2">Web page</label>
+                        <input id="web-page" type="text" formControlName="userWeb" placeholder="Web page" pInputText
                             class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Phone number</label>
-                        <input id="email1" type="text" formControlName="phone" placeholder="Email address" pInputText
+                        <label for="phone" class="block text-900 text-xl font-medium mb-2">Phone number</label>
+                        <input id="phone" type="text" formControlName="phone" placeholder="Phone number" pInputText
                             class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="address" class="block text-900 text-xl font-medium mb-2">Address</label>
+                        <!-- <label for="address" class="block text-900 text-xl font-medium mb-2">Address</label>
                         <textarea id="address" rows="2" cols="62" pInputTextarea [autoResize]="true"
-                            formControlName="address"></textarea>
+                            formControlName="address"></textarea><br> -->
+
+                        <label for="address1" class="block text-900 text-xl font-medium mb-2">Address</label>
+                        <div class="grid formgrid">
+                            <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                <p-dropdown [options]="provinces" optionLabel="provincia" formControlName="province"
+                                    optionValue="provincia"
+                                    (onChange)="onChangeProvince(this.registerForm.get('province').value)"
+                                    [filter]="true" filterBy="provincia" [showClear]="true"
+                                    placeholder="Select a Province">
+                                    <ng-template pTemplate="selectedItem">
+                                        <div class="flex align-items-center gap-2"
+                                            *ngIf="this.registerForm.get('province')">
+                                            <div>{{ this.registerForm.get('province').value }}</div>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                            <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                <p-dropdown *ngIf="cantons?.length>0" [options]="cantons" optionLabel="canton"
+                                    formControlName="canton" optionValue="canton"
+                                    (onChange)="onChangeCanton(this.registerForm.get('canton').value)" [filter]="true"
+                                    filterBy="canton" [showClear]="true" placeholder="Select a City">
+                                    <ng-template pTemplate="selectedItem">
+                                        <div class="flex align-items-center gap-2"
+                                            *ngIf="this.registerForm.get('canton')">
+                                            <div>{{ this.registerForm.get('canton').value }}</div>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <br>
+                        <input id="address1" type="text" formControlName="address" placeholder="Address" pInputText
+                            class="w-full md:w-30rem mb-5" style="padding:1rem"><br>
+                        <input id="address2" type="text" formControlName="addressDetail" placeholder="Address details" pInputText class="w-full md:w-30rem mb-5"
+                            style="padding:1rem"><br>
+                        <input type="text" formControlName="zipCode" placeholder="ZIP Code" pInputText class="w-full md:w-30rem mb-5"
+                            style="padding:1rem">
                         <br><br>
                         <!-- <label for="files" class="block text-900 text-xl font-medium mb-2">Files (optional)</label>
                         <p-card id="files">

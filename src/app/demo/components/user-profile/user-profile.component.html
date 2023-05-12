@@ -47,10 +47,47 @@
                         <label for="email1" class="block text-900 text-xl font-medium mb-2">Phone number</label>
                         <input id="email1" type="text" formControlName="phone" placeholder="Email address" pInputText
                             class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="address" class="block text-900 text-xl font-medium mb-2">Address</label>
-                        <textarea id="address" rows="2" cols="62" pInputTextarea [autoResize]="true"
-                            formControlName="address"></textarea>
-                        <br><br>
+
+
+                            <label for="address1" class="block text-900 text-xl font-medium mb-2">Address</label>
+                            <div class="grid formgrid">
+                                <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                    <p-dropdown [options]="provinces" optionLabel="provincia" formControlName="province"
+                                        optionValue="provincia"
+                                        (onChange)="onChangeProvince(this.registerForm.get('province').value)"
+                                        [filter]="true" filterBy="provincia" [showClear]="true"
+                                        placeholder="Select a Province">
+                                        <ng-template pTemplate="selectedItem">
+                                            <div class="flex align-items-center gap-2"
+                                                *ngIf="this.registerForm.get('province')">
+                                                <div>{{ this.registerForm.get('province').value }}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                    <p-dropdown *ngIf="cantons?.length>0" [options]="cantons" optionLabel="canton"
+                                        formControlName="canton" optionValue="canton"
+                                        (onChange)="onChangeCanton()" [filter]="true"
+                                        filterBy="canton" [showClear]="true" placeholder="Select a City">
+                                        <ng-template pTemplate="selectedItem">
+                                            <div class="flex align-items-center gap-2"
+                                                *ngIf="this.registerForm.get('canton')">
+                                                <div>{{ this.registerForm.get('canton').value }}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <br>
+                            <input id="address1" type="text" formControlName="address" placeholder="Address" pInputText
+                                class="w-full md:w-30rem mb-5" style="padding:1rem"><br>
+                            <input id="address2" type="text" formControlName="addressDetail" placeholder="Address details" pInputText class="w-full md:w-30rem mb-5"
+                                style="padding:1rem"><br>
+                            <input type="text" formControlName="zipCode" placeholder="ZIP Code" pInputText class="w-full md:w-30rem mb-5"
+                                style="padding:1rem">
+                            <br><br>
+
                         <label for="files" class="block text-900 text-xl font-medium mb-2">Files (optional)</label>
                         <!-- <div id="signatureKey" class="col-4 mb-3 lg:col-5 lg:mb-3"> -->
                             <p-fileUpload #fileUpload2 mode="basic" chooseLabel="Browse key" [customUpload]="true"

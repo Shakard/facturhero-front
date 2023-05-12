@@ -39,11 +39,17 @@
                         class="p-button-rounded p-button-danger p-button-text" (click)="removeClient()"></button>
 
                 </div>
-                <p>
+                <p *ngIf="formInvoice.get('clientMail').value">
                     <!-- {{formInvoice.get('ruc').value}} <br /> -->
                     {{formInvoice.get('clientMail').value}} <br />
+                    {{formInvoice.get('clientProvince').value}}
+                    {{formInvoice.get('clientCity').value}} <br />
+                    {{formInvoice.get('clientLine1').value}} <br />
+                    {{formInvoice.get('clientLine2').value}} <br />
+                    Zip Code:
+                    {{formInvoice.get('clientZipCode').value}} <br />
+                    Phone Number:
                     {{formInvoice.get('clientPhone').value}} <br />
-                    {{formInvoice.get('clientAddress').value}}<br />
                 </p>
             </div>
         </p-card>
@@ -54,7 +60,13 @@
                     {{this.user.user_ruc}} <br />
                     {{this.user.user_web}} <br />
                     {{this.user.email}} <br />
-                    {{this.user.address}}<br />
+                    {{this.user.address.province}}
+                    {{this.user.address.city}}<br />
+                    {{this.user.address.line1}}
+                    {{this.user.address.line2}}<br />
+                    Zip Code:
+                    {{this.user.address.zip}}<br />
+                    Phone Number:
                     {{this.user.phone}} <br />
                 </p>
             </div>
@@ -113,7 +125,8 @@
                                     ${{getTotalBase(i) | number : "1.0-2"}}
                                 </td>
                                 <td class="text-center">
-                                    <p-inputNumber formControlName="discount" suffix="%" [size]="1"></p-inputNumber>
+                                    <input type="text" pInputText formControlName="discountText" style="width: 80px;">
+                                    <!-- <p-inputNumber formControlName="discountText" [size]="3"></p-inputNumber> -->
                                     (${{getDetailedDiscount(i) | number : "1.0-2"}})
                                 </td>
                                 <td class="text-center">
@@ -177,7 +190,7 @@
                                         <ng-container *ngIf="detail.get('discount').value!==0">
                                             <td>Discount {{detail.get('discount').value}}% of
                                                 ${{detail.get('price').value}}</td>
-                                            <td class="text-end">- ${{getDetailedDiscount(i) | number : "1.0-2"}}</td>
+                                            <td class="text-end">- ${{this.details.at(i).get('detailedDiscount').value | number : "1.0-2"}}</td>
                                         </ng-container>
                                     </tr>
                                     <tr class="tr2">

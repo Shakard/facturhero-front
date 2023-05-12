@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import Swal from 'sweetalert2';
+import { Province } from '../../api/province';
+import { ProvinceService } from '../../service/province.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -17,11 +19,14 @@ export class UserProfileComponent {
     registerForm: FormGroup;
     user: any;
     errors: any = null;
+    provinces: Province[];
+    cantons: any[];
 
     constructor(
         public router: Router,
         public fb: FormBuilder,
         public authService: AuthService,
+        private provinceService: ProvinceService
     ) {
         this.registerForm = this.fb.group({
             id: [''],
@@ -33,15 +38,30 @@ export class UserProfileComponent {
             userWeb: [''],
             phone: [''],
             address: [''],
+            country: ['ECUADOR'],
+            province: [''],
+            canton: [''],
+            addressDetail: [''],
+            zipCode: [''],
             logo: new FormControl(null, [Validators.required,]),
             signature: new FormControl(null, [Validators.required,]),
             password: [''],
+            addressId: [''],
             password_confirmation: [''],
         });
     }
 
     ngOnInit() {
         this.getLoggedUser();
+        this.getProvinces();
+
+    }
+
+    getProvinces() {
+        this.provinceService.getProvinces().then(data => {
+            this.provinces = data.data,
+                console.log(this.provinces);
+        });
     }
 
     onSubmit() {
@@ -55,9 +75,16 @@ export class UserProfileComponent {
         formData.append("userWeb", this.registerForm.controls['userWeb'].value);
         formData.append("phone", this.registerForm.controls['phone'].value);
         formData.append("address", this.registerForm.controls['address'].value);
+        formData.append("country", this.registerForm.controls['country'].value);
+        formData.append("province", this.registerForm.controls['province'].value);
+        formData.append("city", this.registerForm.controls['canton'].value);
+        formData.append("address2", this.registerForm.controls['addressDetail'].value);
+        formData.append("zip", this.registerForm.controls['zipCode'].value);
         formData.append("logo", this.registerForm.controls['logo'].value);
         formData.append("signature", this.registerForm.controls['signature'].value);
         formData.append("password", this.registerForm.controls['password'].value);
+        formData.append("password_confirmation", this.registerForm.controls['password_confirmation'].value);
+        formData.append("addressId", this.registerForm.controls['addressId'].value);
 
         console.log(this.registerForm.value);
 
@@ -110,12 +137,12 @@ export class UserProfileComponent {
     }
 
     getLoggedUser() {
-        this.authService.getLoggedUser()
+        const userId = localStorage.getItem('id');
+        this.authService.getLoggedUserWIthAddress([userId])
             .subscribe(response => {
                 const res: any = response;
-                console.log(res.data);
-                this.user = res.data;
-                console.log(this.user.name);
+                console.log(res.data[0]);
+                this.user = res.data[0];
                 this.registerForm.patchValue({ id: this.user.id });
                 this.registerForm.patchValue({ firstName: this.user.first_name });
                 this.registerForm.patchValue({ lastName: this.user.last_name });
@@ -124,8 +151,14 @@ export class UserProfileComponent {
                 this.registerForm.patchValue({ userRuc: this.user.user_ruc });
                 this.registerForm.patchValue({ userWeb: this.user.user_web });
                 this.registerForm.patchValue({ phone: this.user.phone });
-                this.registerForm.patchValue({ address: this.user.address });
+                this.registerForm.patchValue({ province: this.user.address.province });
+                this.registerForm.patchValue({ canton: this.user.address.city });
+                this.registerForm.patchValue({ address: this.user.address.line1 });
+                this.registerForm.patchValue({ addressDetail: this.user.address.line2 });
+                this.registerForm.patchValue({ zipCode: this.user.address.zip });
                 this.registerForm.patchValue({ logo: this.user.logo });
+                this.registerForm.patchValue({ addressId:this.user.address.id });
+        this.getCantons(this.user.address.province);
             },
                 (error) => {
                     this.errors = error.error;
@@ -133,12 +166,33 @@ export class UserProfileComponent {
             );
     }
 
-    updateAlert(){
+    updateAlert() {
         Swal.fire({
-             title: "Profile updated!",
-             showCancelButton: false,
-             confirmButtonText: "Ok",
-             confirmButtonColor: "#0B253A",
-           });
-      }
+            title: "Profile updated!",
+            showCancelButton: false,
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#0B253A",
+        });
+    }
+
+    onChangeProvince(province: string) {
+        // console.log(this.details.at(i).get("tax").value);
+        // console.log(this.registerForm.value);
+        this.getCantons(province);
+    }
+
+    getCantons(provincia: string) {
+        this.provinceService.getProvinces().then((res: any) => {
+            this.cantons = res.data!.filter((data: any) => data.provincia == provincia);
+            if (this.cantons[0]) {
+                this.cantons = this.cantons[0].cantones;
+                console.log(this.cantons);
+            }
+
+        });
+    }
+
+    onChangeCanton() {
+        console.log(this.registerForm.value);
+    }
 }
