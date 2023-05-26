@@ -11,7 +11,9 @@ import { Product } from '../../api/product';
 import { ProductService } from '../../service/product.service';
 import { Tax } from '../../api/tax';
 import { AuthService, User } from '../../service/auth.service';
+import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
+import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
 
 @Component({
     selector: 'app-invoice',
@@ -45,9 +47,21 @@ export class InvoiceComponent implements OnInit {
     selectedProduct: Product;
     taxes: Tax[];
     selectedTax: Tax;
+    editing: boolean = false;
+    sent: boolean = false;
 
 
-    constructor(public invoiceService: InvoiceService, private clientService: ClientService, private productService: ProductService, private formBuilder: FormBuilder, private spinner: NgxSpinnerService, private authService: AuthService) {
+
+    constructor(
+        public invoiceService: InvoiceService,
+        private clientService: ClientService,
+        private productService: ProductService,
+        private formBuilder: FormBuilder,
+        private spinner: NgxSpinnerService,
+        private authService: AuthService,
+        private location: Location,
+        private messageService: SweetAlertMessageService
+    ) {
         this.taxes = [
             { name: 'IVA 12%', value: 12 },
             { name: 'IVA 14%', value: 14 }
@@ -55,10 +69,33 @@ export class InvoiceComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        console.log(this.location.getState());
+        const editInvoiceData: any = this.location.getState();
         this.getLoggedUser();
         this.getDate();
         this.getInvoiceNumber();
         this.buildFormInvoice();
+        if (editInvoiceData.client) {
+            this.editing = true;
+            this.formInvoice.patchValue({ id: editInvoiceData.id });
+            this.formInvoice.patchValue({ clientId: editInvoiceData.client.id });
+            this.formInvoice.patchValue({ clientTypeOfId: editInvoiceData.client.tipo_identificacion });
+            this.formInvoice.patchValue({ clientIdentification: editInvoiceData.client.identificacion });
+            this.formInvoice.patchValue({ clientName: editInvoiceData.client.razon_social });
+            this.formInvoice.patchValue({ clientMail: editInvoiceData.client.correo });
+            this.formInvoice.patchValue({ clientProvince: editInvoiceData.client.identificacion });
+            this.formInvoice.patchValue({ clientCity: editInvoiceData.client.identificacion });
+            this.formInvoice.patchValue({ clientLine1: editInvoiceData.client.identificacion });
+            this.formInvoice.patchValue({ clientLine2: editInvoiceData.client.identificacion });
+            this.formInvoice.patchValue({ clientZipCode: editInvoiceData.client.identificacion });
+            this.formInvoice.patchValue({ clientPhone: editInvoiceData.client.telefono });
+            for (let i = 0; i < editInvoiceData.certificate_details.length; i++) {
+                var product = editInvoiceData.certificate_details[i].product;
+                var amount = editInvoiceData.certificate_details[i].price * editInvoiceData.certificate_details[i].quantity;
+                this.details.push(this.newDetail(product.id, product.descripcion, product.precio_venta, amount, editInvoiceData.certificate_details[i].quantity, editInvoiceData.certificate_details[i].discount, editInvoiceData.certificate_details[i].tax)); //productId: any, item: any, price: any, amount: any, quantity?:any, discount?:any, tax?:any
+            }
+            this.setSubTotal();
+        }
     }
 
     buildFormInvoice() {
@@ -77,6 +114,10 @@ export class InvoiceComponent implements OnInit {
             userZipCode: [null],
             userLogo: [null, Validators.required],
             clientId: [null, Validators.required],
+            clientTypeOfId: [null, Validators.required],
+            // clientTypeOfId: '05',
+            clientIdentification: [null, Validators.required],
+            // clientIdentification: '1725681462',
             clientName: [null, Validators.required],
             clientMail: [null, Validators.required],
             clientProvince: [null, Validators.required],
@@ -84,6 +125,7 @@ export class InvoiceComponent implements OnInit {
             clientLine1: [null, Validators.required],
             clientLine2: [null],
             clientZipCode: [null],
+            invoiceSerial: [null],
             clientPhone: [null, Validators.required],
             fechaEmicion: [this.currentDate, Validators.required],
             details: this.formBuilder.array([]),
@@ -120,7 +162,9 @@ export class InvoiceComponent implements OnInit {
     }
 
     setQuantity(event: any, index: number) {
-        this.quantity = event.target.value;
+        this.quantity = event.value;
+        this.price = this.details.at(index).get('price').value;
+        console.log(this.price);
         if (this.price) {
             this.amount = this.quantity * this.details.at(index).get('price').value;
             console.log(this.amount);
@@ -128,6 +172,7 @@ export class InvoiceComponent implements OnInit {
         this.details.at(index).get('amount').setValue(this.amount);
         console.log(this.price);
         this.setSubTotal();
+        this.update();
     }
 
     setSubTotal() {
@@ -150,6 +195,7 @@ export class InvoiceComponent implements OnInit {
         this.quantity = null;
         this.amount = null;
         this.setSubTotal();
+        this.update();
     }
 
     getDate() {
@@ -187,6 +233,7 @@ export class InvoiceComponent implements OnInit {
                         this.getInvoiceNumber();
                         this.spinner.hide();
                         this.invoiceSentAlert();
+                        this.sent = true;
                     },
                         (error) => {
                             this.errors = error.error;
@@ -202,8 +249,27 @@ export class InvoiceComponent implements OnInit {
         this.spinner.show();
         this.invoiceService.storeCertificate({ 'invoice': invoice })
             .subscribe(response => {
+                console.log(response.data.id);
+                this.formInvoice.patchValue({ id: response.data.id });
+                this.spinner.hide();
+                this.messageService.successMessage('Invoice created successfully');
+            },
+                (error) => {
+                    this.errors = error.error;
+                    this.spinner.hide();
+                }
+            );
+    }
+
+    updateCertificate(invoice: Invoice) {
+        console.log(invoice);
+
+        this.spinner.show();
+        this.invoiceService.updateCertificate({ 'invoice': invoice })
+            .subscribe(response => {
                 console.log(response);
                 this.spinner.hide();
+                // this.messageService.successMessage('Certificate updated successfully');
             },
                 (error) => {
                     this.errors = error.error;
@@ -228,20 +294,23 @@ export class InvoiceComponent implements OnInit {
     }
 
     onSubmitInvoice() {
-        // this.formInvoice.patchValue({ fechaEmicion: this.currentDate });
-        const templateName = localStorage.getItem('templateName');
-        this.formInvoice.patchValue({ template: templateName });
-        this.formInvoice.patchValue({ subTotal: this.subTotal });
-        this.formInvoice.patchValue({ tax: this.tax });
-        this.formInvoice.patchValue({ total: this.total });
+        // const templateName = localStorage.getItem('templateName');
+        // this.formInvoice.patchValue({ invoiceSerial: this.invoiceSerial });
+        // this.formInvoice.patchValue({ template: templateName });
+        // this.formInvoice.patchValue({ subTotal: this.subTotal });
+        // this.formInvoice.patchValue({ tax: this.tax });
+        // this.formInvoice.patchValue({ total: this.total });
         // this.signInvoice(this.formInvoice.value);
-        console.log(this.formInvoice.value);
-
     }
 
     onSubmitStore() {
         // this.formInvoice.patchValue({ fechaEmicion: this.currentDate });
         this.storeCertificate(this.formInvoice.value);
+    }
+
+    onSubmitUpdate() {
+        // this.formInvoice.patchValue({ fechaEmicion: this.currentDate });
+        this.updateCertificate(this.formInvoice.value);
     }
 
     submitPreviewInvoice() {
@@ -277,6 +346,8 @@ export class InvoiceComponent implements OnInit {
     onRowSelect(event: any) {
         console.log(event.data);
         this.formInvoice.patchValue({ clientId: event.data.id });
+        this.formInvoice.patchValue({ clientTypeOfId: event.data.tipo_identificacion });
+        this.formInvoice.patchValue({ clientIdentification: event.data.identificacion });
         this.formInvoice.patchValue({ clientName: event.data.razon_social });
         this.formInvoice.patchValue({ clientMail: event.data.correo });
         this.formInvoice.patchValue({ clientPhone: event.data.telefono });
@@ -290,6 +361,7 @@ export class InvoiceComponent implements OnInit {
 
     removeClient() {
         this.formInvoice.reset();
+        this.details.clear();
     }
 
     getProducts() {
@@ -312,7 +384,9 @@ export class InvoiceComponent implements OnInit {
         // this.formInvoice.patchValue({ clientMail: event.data.correo });
         // this.formInvoice.patchValue({ clientAddress: event.data.direccion });
         // this.formInvoice.patchValue({ clientPhone: event.data.telefono });
-        this.quantityDialog = true;
+        // this.quantityDialog = true;
+        this.setSubTotal();
+        this.productDialog = false
     }
 
     addDetails(data: any) {
@@ -322,20 +396,21 @@ export class InvoiceComponent implements OnInit {
         this.details.push(this.newDetail(data.id, data.descripcion, data.precio_venta, this.amount));
         // this.setSubTotal();
         console.log('el tamano es ' + (this.details.length - 1));
+        this.update();
     }
 
-    newDetail(productId: any, item: any, price: any, amount: any): FormGroup {
+    newDetail(productId: any, item: any, price: any, amount: any, quantity?: any, discount?: any, tax?: any): FormGroup {
         return this.formBuilder.group({
             item: item,
             price: price,
-            quantity: 1,
+            quantity: ((quantity) ? quantity : 1),
             amount: amount,
             totalBase: '',
-            discountText: '',
-            discount: 0,
+            discountText: ((discount) ? discount + '%' : '0%'),
+            discount: ((discount) ? discount : 0),
             detailedDiscount: '',
             totalWithDiscount: '',
-            tax: 0,
+            tax: ((tax) ? tax : 0),
             detailedTax: '',
             total: '',
             productId: productId,
@@ -412,9 +487,9 @@ export class InvoiceComponent implements OnInit {
 
     getDetailedDiscount(i: any) {
         var discountTextField = this.details.at(i).get("discountText").value;
-        var discountTextField = discountTextField.toString();
-        if (discountTextField.includes('%')) {
-            const discountValue = discountTextField.replace(/\D/g,'');
+        var discountTextField = discountTextField?.toString();
+        if (discountTextField?.includes('%')) {
+            const discountValue = discountTextField.replace(/\D/g, '');
             const price = this.details.at(i).get("price").value;
             const quantity = this.details.at(i).get("quantity").value;
             const discount = discountValue / 100;
@@ -572,7 +647,9 @@ export class InvoiceComponent implements OnInit {
 
     resetForm() {
         this.formInvoice.reset();
+        this.details.clear();
         this.total = null;
+        this.getLoggedUser();
     }
 
     questionSend({ text = 'Are you sure about sending this invoice?' }) {
@@ -611,8 +688,27 @@ export class InvoiceComponent implements OnInit {
     //   );
     // }
     onChangeTax(i: any) {
-        // console.log(this.details.at(i).get("tax").value);
-        console.log(this.formInvoice.value);
-
+        this.update();
     }
+
+    validate(evt: any) {
+        var theEvent = evt || window.event;
+
+        // Handle key press
+        var key = theEvent.keyCode || theEvent.which;
+        key = String.fromCharCode(key);
+
+        var regex = /^[0-9]*\%?$/;
+        if (!regex.test(key)) {
+            theEvent.returnValue = false;
+            if (theEvent.preventDefault) theEvent.preventDefault();
+        }
+    }
+
+    update() {
+       if (this.formInvoice.get('id').value) {
+         this.onSubmitUpdate();
+       }
+    }
+
 }

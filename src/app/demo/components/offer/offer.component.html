@@ -6,7 +6,7 @@
         </ng-template>
     </p-toolbar>
 
-    <div *ngIf="selectedClient?.ruc">
+    <div *ngIf="selectedClient?.identificacion">
         <p-card header="Client" [style]="{ width: 'auto' }">
             <table class="clientInfo">
                 <tr>
@@ -17,7 +17,7 @@
                     <th>Email</th>
                 </tr>
                 <tr>
-                    <td>{{ selectedClient?.ruc }}</td>
+                    <td>{{ selectedClient?.identificacion }}</td>
                     <td>{{ selectedClient?.razon_social }}</td>
                     <td>{{ selectedClient?.telefono }}</td>
                     <td>{{ selectedClient?.address.line1 }}</td>
@@ -252,7 +252,7 @@
             [rowHover]="true" dataKey="id" [(selection)]="selectedOffer" selectionMode="single"
             (onRowSelect)="onRowSelect($event)"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true" [globalFilterFields]="['razon_social', 'ruc']">
+            [showCurrentPageReport]="true" [globalFilterFields]="['razon_social', 'identificacion']">
             <ng-template pTemplate="caption">
                 <div class="flex align-items-center justify-content-between">
                     <span class="p-input-icon-left">
@@ -270,7 +270,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-client>
                 <tr [pSelectableRow]="client">
-                    <td>{{ client.ruc }}</td>
+                    <td>{{ client.identificacion }}</td>
                     <td>{{ client.razon_social }}</td>
                 </tr>
             </ng-template>

@@ -2,7 +2,8 @@ import { Address } from "./address";
 
 export interface Client {
     id?: string;
-    ruc?: string;
+    tipo_identificacion?: string;
+    identificacion?: string;
     razon_social?: string;
     telefono?: string;
     address?: Address;

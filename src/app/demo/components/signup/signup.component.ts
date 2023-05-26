@@ -6,6 +6,7 @@ import { AuthService } from '../../service/auth.service';
 import Swal from 'sweetalert2';
 import { ProvinceService } from '../../service/province.service';
 import { Province } from '../../api/province';
+import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
 
 @Component({
     selector: 'app-signup',
@@ -23,6 +24,7 @@ export class SignupComponent implements OnInit {
     cantons: any[];
     dropDownCities:any = [];
     province: Province;
+    submitted: boolean = false;
     cities!: any[];
 
     constructor(
@@ -30,26 +32,26 @@ export class SignupComponent implements OnInit {
         public fb: FormBuilder,
         public authService: AuthService,
         public provinceService: ProvinceService,
+        private messageService: SweetAlertMessageService
     ) {
         this.registerForm = this.fb.group({
-            firstName: [''],
-            lastName: [''],
-            name: [''],
-            email: [''],
-            userRuc: [''],
-            userWeb: [''],
-            phone: [''],
-            address: [''],
+            firstName: [null, Validators.required],
+            lastName: [null, Validators.required],
+            name: [null, Validators.required],
+            email: [null, [Validators.email, Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+            userRuc: [null, [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9.]+$')]],
+            userWeb: [null],
+            phone: [null, Validators.required],
+            address: [null, Validators.required],
             country: ['ECUADOR'],
-            province: [''],
-            canton: [''],
-            addressDetail: [''],
-            zipCode: [''],
-            city: [''],
-            logo: new FormControl(null, [Validators.required,]),
-            signature: new FormControl(null, [Validators.required,]),
-            password: [''],
-            password_confirmation: [''],
+            province: [null, Validators.required],
+            canton: [null, Validators.required],
+            addressDetail: [null],
+            zipCode: [null],
+            // logo: new FormControl(null),
+            // signature: new FormControl(null),
+            password: [null, [Validators.required, Validators.minLength(6)]],
+            password_confirmation: [null],
         });
     }
 
@@ -61,41 +63,51 @@ export class SignupComponent implements OnInit {
     }
 
     onSubmit() {
-        const formData = new FormData();
-        formData.append("firstName", this.registerForm.controls['firstName'].value);
-        formData.append("lastName", this.registerForm.controls['lastName'].value);
-        formData.append("name", this.registerForm.controls['name'].value);
-        formData.append("email", this.registerForm.controls['email'].value);
-        formData.append("userRuc", this.registerForm.controls['userRuc'].value);
-        formData.append("userWeb", this.registerForm.controls['userWeb'].value);
-        formData.append("phone", this.registerForm.controls['phone'].value);
-        formData.append("address", this.registerForm.controls['address'].value);
-        formData.append("country", this.registerForm.controls['country'].value);
-        formData.append("province", this.registerForm.controls['province'].value);
-        formData.append("city", this.registerForm.controls['canton'].value);
-        formData.append("address2", this.registerForm.controls['addressDetail'].value);
-        formData.append("zip", this.registerForm.controls['zipCode'].value);
-        formData.append("logo", this.registerForm.controls['logo'].value);
-        formData.append("signature", this.registerForm.controls['signature'].value);
-        formData.append("password", this.registerForm.controls['password'].value);
-        formData.append("password_confirmation", this.registerForm.controls['password_confirmation'].value);
+        this.submitted = true;
+        if(this.registerForm.valid){
+            const formData = new FormData();
+            formData.append("firstName", this.registerForm.controls['firstName'].value);
+            formData.append("lastName", this.registerForm.controls['lastName'].value);
+            formData.append("name", this.registerForm.controls['name'].value);
+            formData.append("email", this.registerForm.controls['email'].value);
+            formData.append("userRuc", this.registerForm.controls['userRuc'].value);
+            formData.append("userWeb", this.registerForm.controls['userWeb'].value);
+            formData.append("phone", this.registerForm.controls['phone'].value);
+            formData.append("address", this.registerForm.controls['address'].value);
+            formData.append("country", this.registerForm.controls['country'].value);
+            formData.append("province", this.registerForm.controls['province'].value);
+            formData.append("city", this.registerForm.controls['canton'].value);
+            formData.append("address2", this.registerForm.controls['addressDetail'].value);
+            formData.append("zip", this.registerForm.controls['zipCode'].value);
+            // formData.append("logo", this.registerForm.controls['logo'].value);
+            // formData.append("signature", this.registerForm.controls['signature'].value);
+            formData.append("password", this.registerForm.controls['password'].value);
+            formData.append("password_confirmation", this.registerForm.controls['password_confirmation'].value);
 
-        console.log(this.registerForm.value);
-
-
-        this.authService.register(formData).subscribe(
-            (result) => {
-                console.log(result);
-            },
-            (error) => {
-                this.errors = error.error;
-            },
-            () => {
-                this.registerForm.reset();
-                this.userRegisteredAlert();
-                this.router.navigate(['login']);
-            }
-        );
+            this.authService.register(formData).subscribe(
+                (result) => {
+                    console.log(result);
+                },
+                (error) => {
+                    this.errors = error.error;
+                    console.log(this.errors.email);
+                    if (this.errors.email) {
+                            this.errors.email.forEach((emailError: any) => {
+                                var error = emailError;
+                                this.messageService.error(error);
+                            });
+                        }
+                },
+                () => {
+                    this.registerForm.reset();
+                    this.userRegisteredAlert();
+                    this.router.navigate(['login']);
+                }
+            );
+          }else{
+            console.log('Formulario no validado');
+            this.messageService.error('Please check all the fields');
+          }
     }
     changeSignatureKey(event: any) {
         const file = (event.target as HTMLInputElement)?.files?.[0];

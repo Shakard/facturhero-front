@@ -17,6 +17,14 @@ export class SweetAlertMessageService {
         }).then(response);
     }
 
+    successMessage(response:any) {
+        return Swal.fire({
+            title: response,
+            padding: '1px',
+            color: '#4f62fa',
+        }).then(response);
+    }
+
     error(error:any) {
         return Swal.fire({
             title: error,

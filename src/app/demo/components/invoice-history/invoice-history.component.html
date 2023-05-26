@@ -1,105 +1,114 @@
 <p-table #dt [value]="certificate" [rows]="10" [paginator]="true" [tableStyle]="{ 'min-width': '75rem' }"
-[(selection)]="selectedCertificates" [rowHover]="true" dataKey="id"
-currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
-<ng-template pTemplate="caption">
-    <div class="flex align-items-center justify-content-between">
-        <h5 class="m-0">Manage Invoices</h5>
-        <span class="p-input-icon-left">
-            <i class="pi pi-search"></i>
-            <input pInputText type="text" placeholder="Search..." />
-        </span>
-    </div>
-</ng-template>
-<ng-template pTemplate="header">
-    <tr>
-        <th style="width: 5rem"></th>
-        <th style="min-width: 15rem">Invoice Number</th>
-        <th style="min-width: 15rem">Client Name</th>
-        <th style="min-width: 15rem">Client Phone</th>
-        <th style="min-width: 15rem">Client Address</th>
-        <th style="min-width: 15rem">total</th>
-        <th style="min-width: 15rem">File</th>
-        <th></th>
-    </tr>
-</ng-template>
-<ng-template pTemplate="body" let-certificate let-expanded="expanded">
-    <tr>
-        <td>
-            <button type="button" pButton pRipple [pRowToggler]="certificate"
-                class="p-button-text p-button-rounded p-button-plain" [icon]="
+    [(selection)]="selectedCertificates" [rowHover]="true" dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+            <h5 class="m-0">Invoices</h5>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" placeholder="Search..." />
+            </span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 5rem"></th>
+            <th style="min-width: 15rem">Invoice Number</th>
+            <th style="min-width: 15rem">Client Name</th>
+            <th style="min-width: 15rem">Client Phone</th>
+            <th style="min-width: 15rem">Invoice Status</th>
+            <th style="min-width: 15rem">total</th>
+            <th style="min-width: 15rem"></th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-certificate let-expanded="expanded">
+        <tr>
+            <td>
+                <button type="button" pButton pRipple [pRowToggler]="certificate"
+                    class="p-button-text p-button-rounded p-button-plain" [icon]="
                     expanded
                         ? 'pi pi-chevron-down'
                         : 'pi pi-chevron-right'
                 "></button>
-        </td>
-        <td>{{ certificate.certificate_number }}</td>
-        <td>{{ certificate.client.razon_social }}</td>
-        <td>{{ certificate.client.telefono }}</td>
-        <td>{{ certificate.client.direccion }}</td>
-        <td>{{ getGrandTotal(certificate.certificate_details) }}</td>
-        <td><i (click)="openPreviewPDF(certificate.pdf_route)" class="pi pi-file-pdf" style="font-size: 2rem; color:red"></i></td>
-    </tr>
-</ng-template>
-<ng-template pTemplate="rowexpansion" let-certificate>
-    <tr>
-        <td colspan="7">
-            <div class="p-3">
-                <p-table [value]="certificate.certificate_details" dataKey="id">
-                    <ng-template pTemplate="header">
-    <tr>
-        <th>Quantity</th>
-        <th>Product</th>
-        <th>Unit Price</th>
-        <th>discount</th>
-        <th>tax</th>
-        <th>Total without discount</th>
-        <th>Total with discount</th>
-    </tr>
-</ng-template>
-<ng-template pTemplate="body" let-detail>
-    <tr>
-        <td>{{ detail.quantity }}</td>
-        <td>{{ detail.product.descripcion }}</td>
-        <td>
-            {{ detail.price | number : "1.0-2" }}$
-        </td>
-        <td>
-            {{ detail.discount }}% ({{
-            (detail.discount / 100) *
-            (detail.price * detail.quantity)
-            | number : "1.0-2"
-            }}$)
-        </td>
-        <td>
-            {{ detail.tax }}% ({{
-            (detail.tax / 100) *
-            (detail.price * detail.quantity)
-            | number : "1.0-2"
-            }}$)
-        </td>
-        <td>
-            {{
-            detail.price * detail.quantity
-            | number : "1.0-2"
-            }}$
-        </td>
-        <td>
-            {{
-            detail.price * detail.quantity -
-            (detail.discount / 100) *
-            (detail.price *
-            detail.quantity)
-            | number : "1.0-2"
-            }}$
-        </td>
-    </tr>
-</ng-template>
-<ng-template pTemplate="emptymessage">
-    <tr>
-        <td colspan="6">
-            There are no products for this offer
-            yet.
-        </td>
-    </tr>
-</ng-template>
+            </td>
+            <td>{{ certificate.certificate_number }}</td>
+            <td>{{ certificate.client.razon_social }}</td>
+            <td>{{ certificate.client.telefono }}</td>
+            <td>{{ certificate.status }}</td>
+            <td>{{ getGrandTotal(certificate.certificate_details) }}</td>
+            <td><i *ngIf="certificate.status==='sent'" (click)="openPreviewPDF(certificate.pdf_route)"
+                    class="pi pi-file-pdf" style="font-size: 2rem; color:red"></i><i *ngIf="certificate.status==='created'" (click)="editInvoice(certificate)" class="pi pi-pencil"
+                    style="font-size: 2rem; color:red"></i></td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-certificate>
+        <tr>
+            <td colspan="7">
+                <div class="p-3">
+                    <p-table [value]="certificate.certificate_details" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex align-items-center justify-content-between">
+                                <h5 class="m-0">Details</h5>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+        <tr>
+            <th></th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>discount</th>
+            <th>Total without discount</th>
+            <th>Total with discount</th>
+            <th>tax</th>
+            <th>total</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-detail let-i="rowIndex">
+        <tr>
+            <td></td>
+            <td>{{ detail.product.descripcion }}</td>
+            <td>{{ detail.quantity }}</td>
+            <td>
+                {{ detail.price | number : "1.0-2" }}$
+            </td>
+            <td>
+                {{ detail.discount }}% ({{
+                (detail.discount / 100) *
+                (detail.price * detail.quantity)
+                | number : "1.0-2"
+                }}$)
+            </td>
+            <td>
+                {{
+                detail.price * detail.quantity
+                | number : "1.0-2"
+                }}$
+            </td>
+            <td>
+                {{
+                detail.price * detail.quantity -
+                (detail.discount / 100) *
+                (detail.price *
+                detail.quantity)
+                | number : "1.0-2"
+                }}$
+            </td>
+            <td>
+                {{ detail.tax }}% ({{getDetailedTax(certificate.certificate_details, i) | number : "1.0-2"}}$)
+            </td>
+            <td class="text-center">
+                ${{getTotal(certificate.certificate_details, i) | number : "1.0-2"}}
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="6">
+                There are no products for this offer
+                yet.
+            </td>
+        </tr>
+    </ng-template>
 </p-table>

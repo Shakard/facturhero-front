@@ -5,7 +5,7 @@
                 <div class="text-center mb-5">
                     <div class="text-900 text-3xl font-medium mb-3">
                         <!-- <img src="assets/demo/images/login/facturhero-logo.png" alt="Image" height="50" class="mb-3"> -->
-                       <b>User Profile</b>
+                        <b>User Profile</b>
                     </div><br>
                     <!-- <span class="text-600 font-medium">Create an account to continue to Facturhero</span> -->
                 </div>
@@ -14,7 +14,7 @@
                     <!-- <label for="userLogo" class="block text-900 text-xl font-medium mb-2">Logo</label> -->
                     <img style="max-width: 125px;" id="userLogo"
                         src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}' alt="No logo " />
-                    <p-fileUpload #fileUpload mode="basic" chooseLabel="Browse logo" [customUpload]="true"
+                    <p-fileUpload #fileUpload mode="basic" chooseLabel="Browse logo" [customUpload]="true" accept="image/*"
                         (uploadHandler)="chooseLogo($event, fileUpload)" [auto]="true">
                     </p-fileUpload><br>
                     {{logoName}}
@@ -24,85 +24,161 @@
                             <label for="firstname" class="block text-900 text-xl font-medium mb-2">First name</label>
                             <input id="firstname" formControlName="firstName" type="text" pInputText
                                 style="width: 195px;" placeholder="First Name" />
+                            <div *ngIf="registerForm.controls['firstName'].invalid && (registerForm.controls['firstName'].dirty || registerForm.controls['firstName'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="registerForm.controls['firstName'].errors['required']">
+                                    First Name is required.
+                                </div>
+                            </div>
                         </div>
                         <div class="col-6 mb-3 lg:col-6 lg:mb-3">
                             <label for="lastname" class="block text-900 text-xl font-medium mb-2">Last name</label>
                             <input id="lastname" formControlName="lastName" type="text" pInputText style="width: 195px;"
                                 placeholder="Last name" />
+                            <div *ngIf="registerForm.controls['lastName'].invalid && (registerForm.controls['lastName'].dirty || registerForm.controls['lastName'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="registerForm.controls['lastName'].errors['required']">
+                                    Last Name is required.
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Company name</label>
-                        <input id="email1" type="text" formControlName="name" placeholder="Email address" pInputText
-                            class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                        <input id="email1" type="text" formControlName="email" placeholder="Email address" pInputText
-                            class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">RUC</label>
-                        <input id="email1" type="text" formControlName="userRuc" placeholder="Email address" pInputText
-                            class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Web page</label>
-                        <input id="email1" type="text" formControlName="userWeb" placeholder="Email address" pInputText
-                            class="w-full md:w-30rem mb-5" style="padding:1rem">
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Phone number</label>
-                        <input id="email1" type="text" formControlName="phone" placeholder="Email address" pInputText
-                            class="w-full md:w-30rem mb-5" style="padding:1rem">
-
-
-                            <label for="address1" class="block text-900 text-xl font-medium mb-2">Address</label>
-                            <div class="grid formgrid">
-                                <div class="col-6 mb-3 lg:col-6 lg:mb-3">
-                                    <p-dropdown [options]="provinces" optionLabel="provincia" formControlName="province"
-                                        optionValue="provincia"
-                                        (onChange)="onChangeProvince(this.registerForm.get('province').value)"
-                                        [filter]="true" filterBy="provincia" [showClear]="true"
-                                        placeholder="Select a Province">
-                                        <ng-template pTemplate="selectedItem">
-                                            <div class="flex align-items-center gap-2"
-                                                *ngIf="this.registerForm.get('province')">
-                                                <div>{{ this.registerForm.get('province').value }}</div>
-                                            </div>
-                                        </ng-template>
-                                    </p-dropdown>
-                                </div>
-                                <div class="col-6 mb-3 lg:col-6 lg:mb-3">
-                                    <p-dropdown *ngIf="cantons?.length>0" [options]="cantons" optionLabel="canton"
-                                        formControlName="canton" optionValue="canton"
-                                        (onChange)="onChangeCanton()" [filter]="true"
-                                        filterBy="canton" [showClear]="true" placeholder="Select a City">
-                                        <ng-template pTemplate="selectedItem">
-                                            <div class="flex align-items-center gap-2"
-                                                *ngIf="this.registerForm.get('canton')">
-                                                <div>{{ this.registerForm.get('canton').value }}</div>
-                                            </div>
-                                        </ng-template>
-                                    </p-dropdown>
+                        <div class="form-group">
+                            <label for="cname" class="block text-900 text-xl font-medium mb-2">Company name</label>
+                            <input id="cname" type="text" formControlName="name" placeholder="Company name" pInputText
+                                class="w-full md:w-30rem" style="padding:1rem">
+                            <div
+                                *ngIf="registerForm.controls['name'].invalid && (registerForm.controls['name'].dirty || registerForm.controls['name'].touched)">
+                                <div class="validator" *ngIf="registerForm.controls['name'].errors['required']">
+                                    Company Name is required.
                                 </div>
                             </div>
-                            <br>
-                            <input id="address1" type="text" formControlName="address" placeholder="Address" pInputText
-                                class="w-full md:w-30rem mb-5" style="padding:1rem"><br>
-                            <input id="address2" type="text" formControlName="addressDetail" placeholder="Address details" pInputText class="w-full md:w-30rem mb-5"
-                                style="padding:1rem"><br>
-                            <input type="text" formControlName="zipCode" placeholder="ZIP Code" pInputText class="w-full md:w-30rem mb-5"
-                                style="padding:1rem">
-                            <br><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="block text-900 text-xl font-medium mb-2">Email</label>
+                            <input id="email" type="text" formControlName="email" placeholder="Email address" pInputText
+                                class="w-full md:w-30rem" style="padding:1rem">
+                            <div
+                                *ngIf="registerForm.controls['email'].invalid && (registerForm.controls['email'].dirty || registerForm.controls['email'].touched)">
+                                <div class="validator" *ngIf="registerForm.controls['email'].errors['required']">
+                                    Email is required.
+                                </div>
+                                <div class="validator" *ngIf="registerForm.controls['email'].errors['email']">
+                                    Email must be a valid email address.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ruc" class="block text-900 text-xl font-medium mb-2">RUC</label>
+                            <input id="ruc" type="text" formControlName="userRuc" placeholder="RUC" pInputText
+                                class="w-full md:w-30rem " style="padding:1rem">
+                            <div
+                                *ngIf="registerForm.controls['userRuc'].invalid && (registerForm.controls['userRuc'].dirty || registerForm.controls['userRuc'].touched)">
+                                <div class="validator" *ngIf="registerForm.controls['userRuc'].errors['required']">
+                                    RUC is required.
+                                </div>
+                                <div class="validator"
+                                    *ngIf="registerForm.controls['userRuc'].errors['minlength'] || registerForm.controls['userRuc'].errors['maxlength'] || registerForm.controls['userRuc'].errors['pattern']">
+                                    Please enter a valid RUC.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="web-page" class="block text-900 text-xl font-medium mb-2">Web page</label>
+                            <input id="web-page" type="text" formControlName="userWeb" placeholder="Web page" pInputText
+                                class="w-full md:w-30rem " style="padding:1rem">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="block text-900 text-xl font-medium mb-2">Phone number</label>
+                            <input id="phone" type="text" formControlName="phone" placeholder="Phone number" pInputText
+                                class="w-full md:w-30rem " style="padding:1rem">
+                            <div
+                                *ngIf="registerForm.controls['phone'].invalid && (registerForm.controls['phone'].dirty || registerForm.controls['phone'].touched)">
+                                <div class="validator" *ngIf="registerForm.controls['phone'].errors['required']">
+                                    Phone number is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="address1" class="block text-900 text-xl font-medium mb-2">Address</label>
+                        <div class="grid formgrid">
+                            <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                <p-dropdown [options]="provinces" optionLabel="provincia" formControlName="province"
+                                    optionValue="provincia"
+                                    (onChange)="onChangeProvince(this.registerForm.get('province').value)"
+                                    [filter]="true" filterBy="provincia" [showClear]="true"
+                                    placeholder="Select a Province">
+                                    <ng-template pTemplate="selectedItem">
+                                        <div class="flex align-items-center gap-2"
+                                            *ngIf="this.registerForm.get('province')">
+                                            <div>{{ this.registerForm.get('province').value }}</div>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                            <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                <p-dropdown *ngIf="cantons?.length>0" [options]="cantons" optionLabel="canton"
+                                    formControlName="canton" optionValue="canton" (onChange)="onChangeCanton()"
+                                    [filter]="true" filterBy="canton" [showClear]="true" placeholder="Select a City">
+                                    <ng-template pTemplate="selectedItem">
+                                        <div class="flex align-items-center gap-2"
+                                            *ngIf="this.registerForm.get('canton')">
+                                            <div>{{ this.registerForm.get('canton').value }}</div>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div style="max-width: 20rem;"
+                            *ngIf="registerForm.controls['province'].invalid && (registerForm.controls['province'].dirty || registerForm.controls['province'].touched)">
+                            <div class="validator" *ngIf="registerForm.controls['province'].errors['required']">
+                                Province is required.
+                            </div>
+                        </div>
+                        <div style="max-width: 20rem;"
+                            *ngIf="registerForm.controls['canton'].invalid && (registerForm.controls['canton'].dirty || registerForm.controls['canton'].touched)">
+                            <div class="validator" *ngIf="registerForm.controls['canton'].errors['required']">
+                                City is required.
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <input id="address1" type="text" formControlName="address" placeholder="Line 1"
+                                pInputText class="w-full md:w-20rem " style="padding:1rem">
+                            <div style="max-width: 20rem;"
+                                *ngIf="registerForm.controls['address'].invalid && (registerForm.controls['address'].dirty || registerForm.controls['address'].touched)">
+                                <div class="validator" *ngIf="registerForm.controls['address'].errors['required']">
+                                    Line 1 is required.
+                                </div>
+                            </div>
+                        </div><br>
+                        <div class="form-group">
+                            <input id="address2" type="text" formControlName="addressDetail" placeholder="Line 2"
+                                pInputText class="w-full md:w-20rem " style="padding:1rem">
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <input type="text" formControlName="zipCode" placeholder="ZIP Code" pInputText
+                                class="w-full md:w-20rem " style="padding:1rem">
+                        </div>
+                        <br><br>
 
                         <label for="files" class="block text-900 text-xl font-medium mb-2">Files (optional)</label>
                         <!-- <div id="signatureKey" class="col-4 mb-3 lg:col-5 lg:mb-3"> -->
-                            <p-fileUpload #fileUpload2 mode="basic" chooseLabel="Browse key" [customUpload]="true"
-                                (uploadHandler)="chooseKey($event, fileUpload2)" [auto]="true"
-                                pTooltip="A encrypted digital signature, stamp of authentication on digital electronic documents. A signature confirms that the information originated from the signer and has not been altered."
-                                tooltipPosition="top">
-                            </p-fileUpload><br>
-                            {{keyName}}
-                            <br>
-                            <!-- <div class="tooltip">A encrypted digital signature, stamp of authentication on digital electronic documents. A signature confirms that the information originated from the signer and has not been altered. To purchase a verified signature please use one of the links below </div> -->
+                        <p-fileUpload #fileUpload2 mode="basic" chooseLabel="Browse key" [customUpload]="true" accept= ".p12"
+                            (uploadHandler)="chooseKey($event, fileUpload2)" [auto]="true"
+                            pTooltip="A encrypted digital signature, stamp of authentication on digital electronic documents. A signature confirms that the information originated from the signer and has not been altered."
+                            tooltipPosition="top">
+                        </p-fileUpload><br>
+                        {{keyName}}
+                        <br>
+                        <!-- <div class="tooltip">A encrypted digital signature, stamp of authentication on digital electronic documents. A signature confirms that the information originated from the signer and has not been altered. To purchase a verified signature please use one of the links below </div> -->
                         <!-- </div> -->
 
 
                         <br>
-                        <button pButton pRipple label="Sign Up" type="submit" class="w-full p-3 text-xl"></button>
+                        <button pButton pRipple label="Submit" type="submit" class="w-full p-3 text-xl"></button>
                     </div>
                 </form>
             </div>

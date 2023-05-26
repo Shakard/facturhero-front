@@ -3,20 +3,18 @@
         <div class="invoice-headar">
             <div class="row g-0">
                 <div class="invoice-header">
-                    <div class="logo">
+                    <div class="logo" style="margin-bottom: auto; margin-top: auto;">
                         <div style="z-index: -1;" *ngIf="this.user">
                             <img src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}'
                                 alt=" " />
                         </div>
                     </div>
-                    <div class="info">
-                        <h1>Invoice</h1>
+                    <div class="info" style="font-size: large;">
                         <p>
-                            Invoice Number
-                            <span style="font-size: 13px">#{{ invoiceSerial }}</span>
+                            <span>Invoice: #{{ invoiceSerial }}</span>
                         </p>
                         <p>
-                            Invoice Date <span>{{ currentDate }}</span>
+                            <span>Date: {{ currentDate }}</span>
                         </p>
                     </div>
                 </div>
@@ -28,7 +26,7 @@
         <p-card [style]="{'width': '27rem', 'margin': '0em 7em 3em 5em'}">
             <!-- <button *ngIf="!formInvoice.get('clientName').value" pButton pRipple label="Add Customer" icon="pi pi-plus"
                 class="p-button-success mr-2" (click)="openNew()"></button> -->
-            <button *ngIf="!formInvoice.get('clientName').value" pButton pRipple label="Add client" icon="pi pi-plus"
+            <button *ngIf="!formInvoice.get('clientName').value" pButton pRipple label="Add Customer" icon="pi pi-plus"
                 class="w-full p-3 text-md" (click)="openNew()"></button>
             <div>
                 <div class="grid">
@@ -118,16 +116,26 @@
                                 <td class="text-center">
                                     <!-- <input type="text" formControlName="quantity" (change)="setQuantity($event, i)"
                                         style="width: 50px;" /> -->
-                                    <p-inputNumber formControlName="quantity" (change)="setQuantity($event, i)"
+                                    <p-inputNumber formControlName="quantity" [showButtons]="true"
+                                        buttonLayout="vertical" (onInput)="setQuantity($event, i)"
                                         [size]="1"></p-inputNumber>
                                 </td>
                                 <td class="text-center">
                                     ${{getTotalBase(i) | number : "1.0-2"}}
                                 </td>
                                 <td class="text-center">
-                                    <input type="text" pInputText formControlName="discountText" style="width: 80px;">
+                                    <input id="discoutn-input" type="text" pInputText formControlName="discountText"
+                                        style="width: 80px;" (keypress)="validate($event)" (change)="update()"
+                                        pattern="[0-9]{1,9}[%]?"
+                                        [ngClass]="{ 'is-invalid': submitted && this.details.at(i).get('discountText').errors }">
                                     <!-- <p-inputNumber formControlName="discountText" [size]="3"></p-inputNumber> -->
                                     (${{getDetailedDiscount(i) | number : "1.0-2"}})
+                                    <div *ngIf="this.details.at(i)?.get('discountText').errors">
+                                        <small *ngIf="this.details.at(i).get('discountText').errors['pattern']">
+                                            *Plate number not valid. <a href="https://bit.ly/PicoPlaca01">for more
+                                                information</a>
+                                        </small>
+                                    </div>
                                 </td>
                                 <td class="text-center">
                                     ${{getTotalWithoutTax(i) | number : "1.0-2"}}
@@ -170,17 +178,18 @@
                                     </tr>
                                 </div>
                             </div> -->
-                            <div style="display: grid; grid-template-columns: 70% 40%;; align-items: end;">
+                            <div style="display: grid; grid-template-columns: 70% 40%;; align-items: end;"
+                                *ngIf="total">
                                 <form [formGroup]="formInvoice">
                                     <div>
                                         <span class="p-float-label">
-                                            <textarea formControlName="note" id="float-input" rows="5" cols="80"
+                                            <textarea formControlName="note" id="float-input" rows="5" cols="40"
                                                 pInputTextarea></textarea>
                                             <label for="float-input">Note</label>
                                         </span>
                                     </div>
                                 </form>
-                                <div *ngIf="total">
+                                <div>
                                     <tr class="tr2">
                                         <td>Total (Base)</td>
                                         <td class="text-end">${{getGrandTotalBase() | number : "1.0-2"}}</td>
@@ -190,7 +199,8 @@
                                         <ng-container *ngIf="detail.get('discount').value!==0">
                                             <td>Discount {{detail.get('discount').value}}% of
                                                 ${{detail.get('price').value}}</td>
-                                            <td class="text-end">- ${{this.details.at(i).get('detailedDiscount').value | number : "1.0-2"}}</td>
+                                            <td class="text-end">- ${{this.details.at(i).get('detailedDiscount').value |
+                                                number : "1.0-2"}}</td>
                                         </ng-container>
                                     </tr>
                                     <tr class="tr2">
@@ -220,9 +230,25 @@
                 <div style="margin-top: 10px;">
                 </div>
             </div>
+            <!-- <button *ngIf="total && editing === true" pButton pRipple label="Update Invoice"
+                style="background-color: #0B253A;" class="p-3 text-md" (click)="onSubmitStore()"></button>
+
+            <button *ngIf="total && editing === false" pButton pRipple label="Store Invoice"
+                style="background-color: #0B253A;" class="p-3 text-md" (click)="onSubmitStore()"></button>
 
             <button *ngIf="total" pButton pRipple label="Preview Document" style="margin-left: 770px; margin-top: 20px;"
-                class="p-3 text-md" (click)="submitPreviewInvoice()"></button>
+                class="p-3 text-md" (click)="submitPreviewInvoice()"></button> -->
+
+            <div class="grid-container">
+                <div></div>
+                <div>
+                    <!-- <button *ngIf="total && formInvoice.get('id').value && sent===false" pButton pRipple
+                        label="Update Invoice" style="background-color: #0B253A;" class="p-3 text-md"
+                        (click)="onSubmitUpdate()"></button> -->
+                    <button *ngIf="total" pButton pRipple label="Preview Document" class="p-3 text-md"
+                        (click)="submitPreviewInvoice()"></button>
+                </div>
+            </div>
         </p-card>
     </form>
 
@@ -258,11 +284,14 @@
             <!-- <a id="invoice_download_btn" (click)="onSubmitInvoice()" class="btn btn-lg btn-download btn-theme">
                 <i class="fa fa-download"></i> Send Invoice
             </a> -->
-            <button *ngIf="formInvoice.get('clientName').value" pButton pRipple label="Clear invoice"
-                style="margin-right: 20px;" class="p-3 text-md" (click)="resetForm()"></button>
+            <button *ngIf="formInvoice.get('clientName').value && !formInvoice.get('id').value" pButton pRipple
+                label="Clear invoice" style="margin-right: 20px;" class="p-3 text-md" (click)="resetForm()"></button>
+            <button *ngIf="total && !formInvoice.get('id').value && sent===false" pButton pRipple label="Create Invoice"
+                style="background-color: #0B253A;" class="p-3 text-md" (click)="onSubmitStore()"></button>
+            <button *ngIf="total && formInvoice.get('id').value && sent===false" pButton pRipple label="Send Invoice"
+                style="background-color: #0B253A;" class="p-3 text-md" (click)="onSubmitInvoice()"></button>
 
-            <button *ngIf="total" pButton pRipple label="Send Invoice" style="background-color: #0B253A;"
-                class="p-3 text-md" (click)="onSubmitInvoice()"></button>
+
 
             <!-- <a id="invoice_download_btn" (click)="onSubmitStore()" class="btn btn-lg btn-download btn-theme">
                 <i class="fa fa-download"></i> store
@@ -305,13 +334,13 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th style="min-width:15rem">Ruc or Identification </th>
+                    <th style="min-width:15rem">Identification</th>
                     <th style="min-width:15rem">Name or Business </th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-client>
                 <tr [pSelectableRow]="client">
-                    <td>{{client.ruc}}</td>
+                    <td>{{client.identificacion}}</td>
                     <td>{{client.razon_social}}</td>
                 </tr>
             </ng-template>

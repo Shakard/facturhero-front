@@ -46,7 +46,6 @@ import { ProvinceService } from './demo/service/province.service';
 
 
 
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -58,7 +57,7 @@ import { ProvinceService } from './demo/service/province.service';
         SignupComponent,
         InvoiceHistoryComponent,
         UserProfileComponent,
-        InvoiceTemplateComponent
+        InvoiceTemplateComponent,
     ],
     imports: [
         AppRoutingModule,

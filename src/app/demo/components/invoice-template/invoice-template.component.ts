@@ -66,9 +66,9 @@ export class InvoiceTemplateComponent {
     }
 
     setFavorite(templateName: string) {
-        console.log(templateName);
-        localStorage.setItem('templateName',templateName);
-        this.successAlert();
+        // console.log(templateName);
+        // localStorage.setItem('templateName',templateName);
+        // this.successAlert();
     }
 
     successAlert() {

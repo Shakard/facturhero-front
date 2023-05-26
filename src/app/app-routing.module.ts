@@ -15,7 +15,7 @@ import { AuthGuard } from './guard/auth.guard';
 @NgModule({
     imports: [
         RouterModule.forRoot([
-            { path: '', redirectTo: '/login', pathMatch: 'full' },
+            { path: '', redirectTo: '/landing', pathMatch: 'full' },
             { path: 'login', component: SigninComponent },
             { path: 'register', component: SignupComponent },
             {
@@ -31,6 +31,7 @@ import { AuthGuard } from './guard/auth.guard';
                     { path: 'client', component: ClientComponent },
                 ]
             },
+            { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: '**', redirectTo: '/notfound' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })
