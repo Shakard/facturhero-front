@@ -279,18 +279,18 @@ export class InvoiceComponent implements OnInit {
     }
 
     previewInvoice(invoice: Invoice) {
-        this.spinner.show();
-        this.invoiceService.previewInvoicePDF({ 'invoice': invoice })
-            .subscribe(response => {
-                console.log(response);
-                this.spinner.hide();
-                window.open('http://localhost/invoice-backend/public/authorizedPDF/' + response + '.pdf', '_blank');
-            },
-                (error) => {
-                    this.errors = error.error;
-                    this.spinner.hide();
-                }
-            );
+        // this.spinner.show();
+        // this.invoiceService.previewInvoicePDF({ 'invoice': invoice })
+        //     .subscribe(response => {
+        //         console.log(response);
+        //         this.spinner.hide();
+        //         window.open('http://localhost/invoice-backend/public/authorizedPDF/' + response + '.pdf', '_blank');
+        //     },
+        //         (error) => {
+        //             this.errors = error.error;
+        //             this.spinner.hide();
+        //         }
+        //     );
     }
 
     onSubmitInvoice() {
