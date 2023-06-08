@@ -13,7 +13,7 @@
                 <form class="form-signin" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                     <!-- <label for="userLogo" class="block text-900 text-xl font-medium mb-2">Logo</label> -->
                     <img style="max-width: 125px;" id="userLogo"
-                        src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}' alt="No logo " />
+                        src='{{ "http://www.facturhero.com/invoice-backend/public/logos/" + this.user?.logo}}' alt="No logo " />
                     <p-fileUpload #fileUpload mode="basic" chooseLabel="Browse logo" [customUpload]="true" accept="image/*"
                         (uploadHandler)="chooseLogo($event, fileUpload)" [auto]="true">
                     </p-fileUpload><br>

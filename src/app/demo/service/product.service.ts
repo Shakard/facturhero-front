@@ -39,8 +39,8 @@ export class ProductService {
             .then(data => data);
     }
 
-    getProducts(): Observable<Product[]> {
-        return this.http.get<Product[]>(this.url + 'auth/products')
+    getProducts(id: any): Observable<Product[]> {
+        return this.http.post<Product[]>(this.url + 'auth/products', id)
     }
 
     createProduct(product: any): Observable<Product> {

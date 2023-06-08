@@ -62,7 +62,7 @@ export class InvoiceHistoryComponent {
     }
 
     openPreviewPDF(route: any) {
-        window.open('http://localhost/invoice-backend/public/' + route, '_blank');
+        window.open('http://www.facturhero.com/invoice-backend/public/' + route, '_blank');
     }
 
     editInvoice(certificate: any) {

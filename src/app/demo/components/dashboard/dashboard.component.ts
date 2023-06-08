@@ -141,7 +141,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     getClients() {
-        this.clientService.getClients().subscribe((data: Client[]) => {
+        const userId = localStorage.getItem('id');
+        this.clientService.getClients({ 'id': userId}).subscribe((data: Client[]) => {
             this.clients = data;
             console.log(this.clients);
         });

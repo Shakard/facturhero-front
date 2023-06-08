@@ -279,28 +279,28 @@ export class InvoiceComponent implements OnInit {
     }
 
     previewInvoice(invoice: Invoice) {
-        // this.spinner.show();
-        // this.invoiceService.previewInvoicePDF({ 'invoice': invoice })
-        //     .subscribe(response => {
-        //         console.log(response);
-        //         this.spinner.hide();
-        //         window.open('http://localhost/invoice-backend/public/authorizedPDF/' + response + '.pdf', '_blank');
-        //     },
-        //         (error) => {
-        //             this.errors = error.error;
-        //             this.spinner.hide();
-        //         }
-        //     );
+        this.spinner.show();
+        this.invoiceService.previewInvoicePDF({ 'invoice': invoice })
+            .subscribe(response => {
+                console.log(response);
+                this.spinner.hide();
+                window.open('http://www.facturhero.com/invoice-backend/public/previewPDF/' + response + '.pdf', '_blank');
+            },
+                (error) => {
+                    this.errors = error.error;
+                    this.spinner.hide();
+                }
+            );
     }
 
     onSubmitInvoice() {
-        // const templateName = localStorage.getItem('templateName');
-        // this.formInvoice.patchValue({ invoiceSerial: this.invoiceSerial });
-        // this.formInvoice.patchValue({ template: templateName });
-        // this.formInvoice.patchValue({ subTotal: this.subTotal });
-        // this.formInvoice.patchValue({ tax: this.tax });
-        // this.formInvoice.patchValue({ total: this.total });
-        // this.signInvoice(this.formInvoice.value);
+        const templateName = localStorage.getItem('templateName');
+        this.formInvoice.patchValue({ invoiceSerial: this.invoiceSerial });
+        this.formInvoice.patchValue({ template: templateName });
+        this.formInvoice.patchValue({ subTotal: this.subTotal });
+        this.formInvoice.patchValue({ tax: this.tax });
+        this.formInvoice.patchValue({ total: this.total });
+        this.signInvoice(this.formInvoice.value);
     }
 
     onSubmitStore() {
@@ -333,7 +333,8 @@ export class InvoiceComponent implements OnInit {
     }
 
     getClients() {
-        this.clientService.getClients().subscribe((data: Client[]) => {
+        const userId = localStorage.getItem('id');
+        this.clientService.getClients({ 'id': userId }).subscribe((data: Client[]) => {
             this.clients = data;
             console.log(this.clients);
         });
@@ -365,7 +366,8 @@ export class InvoiceComponent implements OnInit {
     }
 
     getProducts() {
-        this.productService.getProducts().subscribe((data: Product[]) => {
+        const userId = localStorage.getItem('id');
+        this.productService.getProducts({ 'id': userId}).subscribe((data: Product[]) => {
             this.products = data;
             console.log(this.products);
         });

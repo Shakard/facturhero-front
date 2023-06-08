@@ -48,8 +48,11 @@ export class InvoiceService {
         return this.http.put(this.URL + 'auth/edit-certificate', data);
     }
 
-    getInvoicesByClient(id:any): Observable<Invoice[]> {
-        return this.http.get<Invoice[]>(this.URL + 'auth/client-certificates/' +id)
+    // getInvoicesByClient(id:any): Observable<Invoice[]> {
+    //     return this.http.post<Invoice[]>(this.URL + 'auth/client-certificates/' +id)
+    // }
+    getInvoicesByClient(id: any): Observable<Invoice[]> {
+        return this.http.post<Invoice[]>(this.URL + 'auth/client-certificates', id)
     }
 
     // store(url: string, data: any, params = new HttpParams()) {

@@ -27,8 +27,16 @@ export class ProductComponent {
         this.buildFormProduct();
     }
 
+    // getProducts() {
+    //     this.productService.getProducts().subscribe((data: Product[]) => {
+    //         this.products = data;
+    //         console.log(this.products);
+    //     });
+    // }
+
     getProducts() {
-        this.productService.getProducts().subscribe((data: Product[]) => {
+        const userId = localStorage.getItem('id');
+        this.productService.getProducts({ 'id': userId}).subscribe((data: Product[]) => {
             this.products = data;
             console.log(this.products);
         });
@@ -36,6 +44,7 @@ export class ProductComponent {
 
     buildFormProduct() {
         this.formProduct = new FormGroup({
+            userId: new FormControl(localStorage.getItem('id')),
             code: new FormControl('', Validators.required),
             item: new FormControl('', Validators.required),
             quantity: new FormControl('', Validators.required),

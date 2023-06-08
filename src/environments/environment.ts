@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  URL_API: 'http://127.0.0.1/invoice-backend/public/api/',
+  URL_API: 'http://www.facturhero.com/invoice-backend/public/api/',
 };
 
 /*

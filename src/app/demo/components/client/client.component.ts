@@ -32,6 +32,10 @@ export class ClientComponent {
     cantons: any[];
     editingClient: boolean;
     typesOfIds: TypeOfId[];
+    userId = localStorage.getItem('id');
+    visible: boolean;
+
+
 
     formClient: FormGroup;
 
@@ -42,6 +46,10 @@ export class ClientComponent {
         this.getProvinces();
         this.buildFormClient();
         this.getTypesOfIds();
+    }
+
+    showDialog() {
+        this.visible = true;
     }
 
     getTypesOfIds() {
@@ -55,7 +63,7 @@ export class ClientComponent {
     }
 
     getClients() {
-        this.clientService.getClients().subscribe((data: Client[]) => {
+        this.clientService.getClients({ 'id': this.userId }).subscribe((data: Client[]) => {
             this.clients = data;
             console.log(this.clients);
         });
@@ -73,7 +81,7 @@ export class ClientComponent {
             typeOfId: new FormControl('', Validators.required),
             identification: new FormControl('', Validators.required),
             name: new FormControl('', Validators.required),
-            phone: new FormControl('', Validators.required),
+            phone: new FormControl(''),
             country: new FormControl(''),
             province: new FormControl('', Validators.required),
             canton: new FormControl('', Validators.required),
@@ -142,9 +150,8 @@ export class ClientComponent {
     }
 
     newClient() {
-        const userId = localStorage.getItem('id');
         this.formClient.patchValue({ country: 'ECUADOR' });
-        this.formClient.patchValue({ userId: userId });
+        this.formClient.patchValue({ userId: this.userId });
         console.log(this.formClient.value);
         this.clientService.createClient(this.formClient.value).subscribe(res => {
             console.log('client created successfully!');
@@ -271,7 +278,7 @@ export class ClientComponent {
     }
 
       openPreviewPDF(route:any) {
-        window.open('http://localhost/invoice-backend/public/'+ route, '_blank');
+        window.open('http://www.facturhero.com/invoice-backend/public/'+ route, '_blank');
       }
 
       editInvoice(certificate: any){
