@@ -2,11 +2,11 @@ import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/cor
 import { Router } from '@angular/router';
 
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../service/auth.service';
 import Swal from 'sweetalert2';
-import { ProvinceService } from '../../service/province.service';
-import { Province } from '../../api/province';
-import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
+import { Province } from 'src/app/demo/api/province';
+import { AuthService } from 'src/app/demo/service/auth.service';
+import { ProvinceService } from 'src/app/demo/service/province.service';
+import { SweetAlertMessageService } from 'src/app/demo/service/sweet-alert-message.service';
 
 @Component({
     selector: 'app-signup',

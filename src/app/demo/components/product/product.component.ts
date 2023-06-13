@@ -57,6 +57,7 @@ export class ProductComponent {
     }
 
     openNew() {
+        this.formProduct.patchValue({ userId: localStorage.getItem('id') });
         this.product = {};
         this.submitted = false;
         this.productDialog = true;

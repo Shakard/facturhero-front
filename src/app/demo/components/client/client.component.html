@@ -68,7 +68,7 @@
                 <label for="float-input">Address</label>
             </span> -->
                         <label for="address1" class="block text-900 text-xl font-medium mb-2">Address</label>
-                        <div class="grid formgrid">
+                        <div class="grid formgrid" *ngIf="formClient.controls['typeOfId'].value!=='08'">
                             <div class="col-6 mb-3 lg:col-6 lg:mb-3">
                                 <p-dropdown [options]="provinces" optionLabel="provincia" formControlName="province"
                                     optionValue="provincia"
@@ -97,18 +97,48 @@
                             </div>
                         </div>
                         <div style="max-width: 20rem;"
-                            *ngIf="formClient.controls['province'].invalid && (formClient.controls['province'].dirty || formClient.controls['province'].touched)">
+                            *ngIf="formClient.controls['province'].invalid && formClient.controls['typeOfId'].value!=='08' && (formClient.controls['province'].dirty || formClient.controls['province'].touched)">
                             <div class="validator" *ngIf="formClient.controls['province'].errors['required']">
                                 Province is required.
                             </div>
                         </div>
                         <div style="max-width: 20rem;"
-                            *ngIf="formClient.controls['canton'].invalid && (formClient.controls['canton'].dirty || formClient.controls['canton'].touched)">
+                            *ngIf="formClient.controls['canton'].invalid && formClient.controls['typeOfId'].value!=='08' && (formClient.controls['canton'].dirty || formClient.controls['canton'].touched)">
                             <div class="validator" *ngIf="formClient.controls['canton'].errors['required']">
                                 City is required.
                             </div>
                         </div>
                         <br>
+                        <span class="p-float-label" *ngIf="formClient.controls['typeOfId'].value==='08'">
+                            <input id="Country" type="text" pInputText formControlName="country" placeholder="Country">
+                            <label for="float-input">Country</label>
+                            <div *ngIf="formClient.controls['country'].invalid && (formClient.controls['country'].dirty || formClient.controls['country'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['country'].errors['required']">
+                                    Country is required.
+                                </div>
+                            </div>
+                        </span><br>
+                        <span class="p-float-label" *ngIf="formClient.controls['typeOfId'].value==='08'">
+                            <input id="Province" type="text" pInputText formControlName="province" placeholder="Province or state">
+                            <label for="float-input">Province or state</label>
+                            <div *ngIf="formClient.controls['province'].invalid && (formClient.controls['province'].dirty || formClient.controls['province'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['province'].errors['required']">
+                                    Province or state is required.
+                                </div>
+                            </div>
+                        </span><br>
+                        <span class="p-float-label" *ngIf="formClient.controls['typeOfId'].value==='08'">
+                            <input id="Canton" type="text" pInputText formControlName="canton" placeholder="City">
+                            <label for="float-input">City</label>
+                            <div *ngIf="formClient.controls['canton'].invalid && (formClient.controls['canton'].dirty || formClient.controls['canton'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['canton'].errors['required']">
+                                    City is required.
+                                </div>
+                            </div>
+                        </span><br>
                         <span class="p-float-label">
                             <input id="address1" type="text" pInputText formControlName="address" placeholder="Address">
                             <label for="float-input">Line 1</label>

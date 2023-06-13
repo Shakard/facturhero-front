@@ -11,7 +11,6 @@ import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SigninComponent } from './demo/components/singin/singin.component';
 import { InvoiceComponent } from './demo/components/invoice/invoice.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ProductComponent } from './demo/components/product/product.component';
@@ -30,7 +29,6 @@ import { OfferComponent } from './demo/components/offer/offer.component';
 import { OfferService } from './demo/service/offer.service';
 import {DropdownModule} from 'primeng/dropdown';
 import {InputTextareaModule} from 'primeng/inputtextarea';
-import { SignupComponent } from './demo/components/signup/signup.component';
 import { InvoiceHistoryComponent } from './demo/components/invoice-history/invoice-history.component';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -49,12 +47,10 @@ import { ProvinceService } from './demo/service/province.service';
 @NgModule({
     declarations: [
         AppComponent,
-        SigninComponent,
         InvoiceComponent,
         ProductComponent,
         ClientComponent,
         OfferComponent,
-        SignupComponent,
         InvoiceHistoryComponent,
         UserProfileComponent,
         InvoiceTemplateComponent,

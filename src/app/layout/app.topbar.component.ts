@@ -56,7 +56,7 @@ export class AppTopBarComponent {
             localStorage.removeItem('user_web');
             localStorage.removeItem('id');
             localStorage.removeItem('rememberMe');
-            this.router.navigate(['']);
+            this.router.navigate(['/auth/login']);
         })
     }
 

@@ -82,7 +82,7 @@ export class ClientComponent {
             identification: new FormControl('', Validators.required),
             name: new FormControl('', Validators.required),
             phone: new FormControl(''),
-            country: new FormControl(''),
+            country: new FormControl('', Validators.required),
             province: new FormControl('', Validators.required),
             canton: new FormControl('', Validators.required),
             address: new FormControl('', Validators.required),
@@ -117,7 +117,7 @@ export class ClientComponent {
         this.formClient.patchValue({ identification: client.identificacion });
         this.formClient.patchValue({ name: client.razon_social });
         this.formClient.patchValue({ phone: client.telefono });
-        this.formClient.patchValue({ country: 'ECUADOR' });
+        this.formClient.patchValue({ country: client.address.country });
         this.formClient.patchValue({ province: client.address.province });
         this.formClient.patchValue({ canton: client.address.city });
         this.formClient.patchValue({ address: client.address.line1 });

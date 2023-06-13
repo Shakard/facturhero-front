@@ -14,6 +14,7 @@ import { AuthService, User } from '../../service/auth.service';
 import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
 import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
+import { PaymentMethod } from '../../api/payment-method';
 
 @Component({
     selector: 'app-invoice',
@@ -46,9 +47,11 @@ export class InvoiceComponent implements OnInit {
     selectedClient: Client;
     selectedProduct: Product;
     taxes: Tax[];
+    payments: PaymentMethod[];
     selectedTax: Tax;
     editing: boolean = false;
     sent: boolean = false;
+    componentDisabled: boolean = false;
 
 
 
@@ -65,6 +68,15 @@ export class InvoiceComponent implements OnInit {
         this.taxes = [
             { name: 'IVA 12%', value: 12 },
             { name: 'IVA 14%', value: 14 }
+        ];
+        this.payments = [
+            { name: 'COMPENSACIÓN DE DEUDAS ', value: '15' },
+            { name: 'TARJETA DE DÉBITO', value: '16' },
+            { name: 'DINERO ELECTRÓNICO ', value: '17' },
+            { name: 'TARJETA PREPAGO ', value: '18' },
+            { name: 'TARJETA DE CRÉDITO ', value: '19' },
+            { name: 'OTROS CON UTILIZACIÓN DEL SISTEMA FINANCIERO ', value: '20' },
+            { name: 'ENDOSO DE TÍTULOS', value: '21' }
         ];
     }
 
@@ -137,6 +149,7 @@ export class InvoiceComponent implements OnInit {
             totalBase: [null, Validators.required],
             subTotal1: [null, Validators.required],
             grandTotal: [null, Validators.required],
+            paymentMethod: ['01', Validators.required],
             template: 'myPDF',
 
             //test controllers
@@ -640,6 +653,9 @@ export class InvoiceComponent implements OnInit {
                 this.formInvoice.patchValue({ userLine2: this.user.address.line2 });
                 this.formInvoice.patchValue({ userZipCode: this.user.address.zip });
                 this.formInvoice.patchValue({ userLogo: this.user.logo });
+                if (!this.user.signature) {
+                    this.componentDisabled = true;
+                }
             },
                 (error) => {
                     this.errors = error.error;
@@ -691,6 +707,10 @@ export class InvoiceComponent implements OnInit {
     // }
     onChangeTax(i: any) {
         this.update();
+    }
+
+    onChangePayment(event: any) {
+        this.formInvoice.patchValue({ paymentMethod: event.value });
     }
 
     validate(evt: any) {

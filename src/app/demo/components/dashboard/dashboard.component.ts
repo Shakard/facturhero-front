@@ -11,6 +11,8 @@ import * as moment from 'moment';
 import { CurrencyPipe } from '@angular/common';
 import { Client } from '../../api/client';
 import { ClientService } from '../../service/client.service';
+import Swal from 'sweetalert2';
+import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -29,7 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     chartInvoices: any[];
     clients: Client[];
 
-    constructor(private productService: ProductService, public layoutService: LayoutService, private authService: AuthService, private invoiceService: InvoiceService, private clientService: ClientService) {
+    constructor(private productService: ProductService, public layoutService: LayoutService, private authService: AuthService, private invoiceService: InvoiceService, private clientService: ClientService, private messageService: SweetAlertMessageService) {
         this.subscription = this.layoutService.configUpdate$.subscribe(() => {
             this.initChart();
         });
@@ -130,6 +132,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.user = res.data;
                 this.getChartInvoices();
                 this.getInvoices();
+                if (!this.user.signature) {
+                    this.showKeyMessage();
+                }
             });
     }
 
@@ -151,6 +156,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         if (this.subscription) {
             this.subscription.unsubscribe();
+            Swal.close();
         }
+    }
+
+    showKeyMessage() {
+        this.messageService.error('To be able to create invoices, please upload a signature key to your <a href="/#/profile">profile</a>');
     }
 }
