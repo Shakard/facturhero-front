@@ -1,18 +1,183 @@
 <div class="card">
     <p-toolbar styleClass="mb-4 gap-2">
         <ng-template pTemplate="left">
-            <button pButton pRipple label="Add new client" icon="pi pi-plus" class="w-full p-3 text-md"
+            <button pButton pRipple label="Add new customer" icon="pi pi-plus" class="w-full p-3 text-md"
                 (click)="openNew()"></button>
             <!-- <button pButton pRipple icon="pi pi-trash" class="p-button-danger"></button> -->
+            <p-dialog [(visible)]="clientDialog" [style]="{width: '450px'}" header="Customer Details" [modal]="true"
+                styleClass="p-fluid">
+                <ng-template pTemplate="content">
+                    <form [formGroup]="formClient" (ngSubmit)="submit()">
+                        <br>
+                        <p-dropdown formControlName="typeOfId" [options]="typesOfIds" optionLabel="name"
+                            optionValue="value" placeholder="Select a type of identification"></p-dropdown>
+                        <div *ngIf="formClient.controls['typeOfId'].invalid && (formClient.controls['typeOfId'].dirty || formClient.controls['typeOfId'].touched)"
+                            class="alert alert-danger">
+                            <div class="validator" *ngIf="formClient.controls['typeOfId'].errors['required']">
+                                Please select a type of identification.
+                            </div>
+                        </div>
+                        <br>
+
+                        <span class="p-float-label" *ngIf="formClient.controls['typeOfId'].value">
+                            <input id="float-input" type="text" pInputText formControlName="identification">
+                            <label for="float-input">Identification</label>
+                            <div *ngIf="formClient.controls['identification'].invalid && (formClient.controls['identification'].dirty || formClient.controls['identification'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['identification'].errors['required']">
+                                    Identification is required.
+                                </div>
+                            </div>
+                        </span>
+
+                        <br>
+                        <span class="p-float-label">
+                            <input id="float-input" type="text" pInputText formControlName="name">
+                            <label for="float-input">Customer or Business Name</label>
+                            <div *ngIf="formClient.controls['name'].invalid && (formClient.controls['name'].dirty || formClient.controls['name'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['name'].errors['required']">
+                                    Name is required.
+                                </div>
+                            </div>
+                        </span>
+
+                        <br>
+                        <span class="p-float-label">
+                            <input id="float-input" type="text" pInputText formControlName="phone">
+                            <label for="float-input">Phone Number (optional)</label>
+                        </span>
+
+                        <br>
+                        <span class="p-float-label">
+                            <input id="float-input" type="text" pInputText formControlName="email">
+                            <label for="float-input">Email</label>
+                            <div
+                                *ngIf="formClient.controls['email'].invalid && (formClient.controls['email'].dirty || formClient.controls['email'].touched)">
+                                <div class="validator" *ngIf="formClient.controls['email'].errors['required']">
+                                    Email is required.
+                                </div>
+                                <div class="validator" *ngIf="formClient.controls['email'].errors['email']">
+                                    Email must be a valid email address.
+                                </div>
+                            </div>
+                        </span>
+                        <br>
+                        <!-- <span class="p-float-label">
+                <input id="float-input" type="text" pInputText formControlName="address">
+                <label for="float-input">Address</label>
+            </span> -->
+                        <label for="address1" class="block text-900 text-xl font-medium mb-2">Address</label>
+                        <div class="grid formgrid" *ngIf="formClient.controls['typeOfId'].value!=='08'">
+                            <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                <p-dropdown [options]="provinces" optionLabel="provincia" formControlName="province"
+                                    optionValue="provincia"
+                                    (onChange)="onChangeProvince(this.formClient.get('province').value)" [filter]="true"
+                                    filterBy="provincia" [showClear]="true" placeholder="Select a Province">
+                                    <ng-template pTemplate="selectedItem">
+                                        <div class="flex align-items-center gap-2"
+                                            *ngIf="this.formClient.get('province')">
+                                            <div>{{ this.formClient.get('province').value }}</div>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                            <div class="col-6 mb-3 lg:col-6 lg:mb-3">
+                                <p-dropdown *ngIf="cantons?.length>0 || editingClient" [options]="cantons"
+                                    optionLabel="canton" formControlName="canton" optionValue="canton"
+                                    (onChange)="onChangeCanton()" [filter]="true" filterBy="canton" [showClear]="true"
+                                    placeholder="Select a City">
+                                    <ng-template pTemplate="selectedItem">
+                                        <div class="flex align-items-center gap-2"
+                                            *ngIf="this.formClient.get('canton')">
+                                            <div>{{ this.formClient.get('canton').value }}</div>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div style="max-width: 20rem;"
+                            *ngIf="formClient.controls['province'].invalid && formClient.controls['typeOfId'].value!=='08' && (formClient.controls['province'].dirty || formClient.controls['province'].touched)">
+                            <div class="validator" *ngIf="formClient.controls['province'].errors['required']">
+                                Province is required.
+                            </div>
+                        </div>
+                        <div style="max-width: 20rem;"
+                            *ngIf="formClient.controls['canton'].invalid && formClient.controls['typeOfId'].value!=='08' && (formClient.controls['canton'].dirty || formClient.controls['canton'].touched)">
+                            <div class="validator" *ngIf="formClient.controls['canton'].errors['required']">
+                                City is required.
+                            </div>
+                        </div>
+                        <br>
+                        <span class="p-float-label" *ngIf="formClient.controls['typeOfId'].value==='08'">
+                            <input id="Country" type="text" pInputText formControlName="country" placeholder="Country">
+                            <label for="float-input">Country</label>
+                            <div *ngIf="formClient.controls['country'].invalid && (formClient.controls['country'].dirty || formClient.controls['country'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['country'].errors['required']">
+                                    Country is required.
+                                </div>
+                            </div>
+                        </span><br>
+                        <span class="p-float-label" *ngIf="formClient.controls['typeOfId'].value==='08'">
+                            <input id="Province" type="text" pInputText formControlName="province" placeholder="Province or state">
+                            <label for="float-input">Province or state</label>
+                            <div *ngIf="formClient.controls['province'].invalid && (formClient.controls['province'].dirty || formClient.controls['province'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['province'].errors['required']">
+                                    Province or state is required.
+                                </div>
+                            </div>
+                        </span><br>
+                        <span class="p-float-label" *ngIf="formClient.controls['typeOfId'].value==='08'">
+                            <input id="Canton" type="text" pInputText formControlName="canton" placeholder="City">
+                            <label for="float-input">City</label>
+                            <div *ngIf="formClient.controls['canton'].invalid && (formClient.controls['canton'].dirty || formClient.controls['canton'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['canton'].errors['required']">
+                                    City is required.
+                                </div>
+                            </div>
+                        </span><br>
+                        <span class="p-float-label">
+                            <input id="address1" type="text" pInputText formControlName="address" placeholder="Address">
+                            <label for="float-input">Line 1</label>
+                            <div *ngIf="formClient.controls['address'].invalid && (formClient.controls['address'].dirty || formClient.controls['address'].touched)"
+                                class="alert alert-danger">
+                                <div class="validator" *ngIf="formClient.controls['address'].errors['required']">
+                                    Line 1 is required.
+                                </div>
+                            </div>
+                        </span><br>
+                        <span class="p-float-label">
+                            <input id="address2" type="text" pInputText formControlName="addressDetail"
+                                placeholder="Address details">
+                            <label for="float-input">Line 2 (optional)</label>
+                        </span><br>
+                        <span class="p-float-label">
+                            <input id="zip" type="text" pInputText formControlName="zipCode" placeholder="ZIP Code">
+                            <label for="float-input">Zip Code (optional)</label>
+                        </span>
+                        <!-- <button class="btn btn-primary" type="submit" [disabled]="!formProduct.valid">Save</button> -->
+                    </form>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()"></button>
+                </ng-template>
+            </p-dialog>
+
         </ng-template>
     </p-toolbar>
 
-    <p-table #dt [value]="clients" [rows]="10" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
-        [(selection)]="selectedClients" [rowHover]="true" dataKey="id"
+    <p-table #dt [value]="clients" selectionMode="single" [rows]="10" [paginator]="true"
+        [tableStyle]="{'min-width': '75rem'}" [(selection)]="selectedClients" [rowHover]="true" dataKey="id"
+        (onRowSelect)="onRowSelect($event)"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
         <ng-template pTemplate="caption">
             <div class="flex align-items-center justify-content-between">
-                <h5 class="m-0">Manage Clients</h5>
+                <h5 class="m-0">Customers</h5>
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
                     <input pInputText type="text" placeholder="Search..." />
@@ -21,75 +186,159 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th style="min-width:15rem">Ruc or Identification </th>
-                <th style="min-width:15rem">Name or Business </th>
-                <th style="min-width:15rem">Phone </th>
-                <th style="min-width:15rem">Address </th>
-                <th style="min-width:15rem">Email </th>
+                <th >Customer ID</th>
+                <th >Identification </th>
+                <th >Name or Business </th>
+                <th >Phone </th>
+                <th >City </th>
+                <th >Address </th>
+                <th >Email </th>
                 <th></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-client>
-            <tr>
-                <td>{{client.ruc}}</td>
+            <tr [pSelectableRow]="client">
+                <td>{{client.id}}</td>
+                <td>{{client.identificacion}}</td>
                 <td>{{client.razon_social}}</td>
                 <td>{{client.telefono}}</td>
-                <td>{{client.direccion}}</td>
+                <td>{{client.address.city}}</td>
+                <td>{{client.address.line1}}</td>
                 <td>{{client.correo}}</td>
                 <td>
-                    <button pButton pRipple icon="pi pi-pencil" style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2" (click)="openEditClient(client)"></button>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded" (click)="deleteClient(client)"></button>
+                    <button pButton pRipple icon="pi pi-pencil"
+                        style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2"
+                        (click)="openEditClient(client)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded"
+                        (click)="deleteClient(client)"></button>
                 </td>
             </tr>
         </ng-template>
         <ng-template pTemplate="summary">
             <div class="flex align-items-center justify-content-between">
-                In total there are {{clients ? clients.length : 0 }} clients.
+                There are {{clients ? clients.length : 0 }} customers.
             </div>
         </ng-template>
     </p-table>
+
+    <br>
+
+    <p-table #dt *ngIf="clientInvoices" [value]="clientInvoices" [rows]="10" [paginator]="true"
+        [tableStyle]="{ 'min-width': '75rem' }" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Invoices</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td></td>
+                <td>
+                    No records found.
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 5rem"></th>
+                <th style="min-width: 15rem">Invoice Number</th>
+                <th style="min-width: 15rem">Date</th>
+                <th style="min-width: 15rem">Status</th>
+                <th style="min-width: 15rem">total</th>
+                <th style="min-width: 15rem"></th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-certificate let-expanded="expanded">
+            <tr>
+                <td>
+                    <button type="button" pButton pRipple [pRowToggler]="certificate"
+                        class="p-button-text p-button-rounded p-button-plain" [icon]="
+                    expanded
+                        ? 'pi pi-chevron-down'
+                        : 'pi pi-chevron-right'
+                "></button>
+                </td>
+                <td>{{ certificate.certificate_number }}</td>
+                <td>{{ certificate.updated_at | date:'MM/dd/yy h:mm:ss a' }}</td>
+                <td>{{ certificate.status }}</td>
+                <td>{{ getGrandTotal(certificate.certificate_details) }}</td>
+                <td><i *ngIf="certificate.status==='sent'" (click)="openPreviewPDF(certificate.pdf_route)"
+                        class="pi pi-file-pdf" style="font-size: 2rem; color:red"></i><i
+                        *ngIf="certificate.status==='created'" (click)="editInvoice(certificate)" class="pi pi-pencil"
+                        style="font-size: 2rem; color:red"></i></td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                There are {{clientInvoices ? clientInvoices.length : 0 }} invoices.
+            </div>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-certificate>
+            <tr>
+                <td colspan="7">
+                    <div class="p-3">
+                        <p-table [value]="certificate.certificate_details" dataKey="id">
+                            <ng-template pTemplate="caption">
+                                <div class="flex align-items-center justify-content-between">
+                                    <h5 class="m-0">Details</h5>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+            <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>discount</th>
+                <th>Total without discount</th>
+                <th>Total with discount</th>
+                <th>tax</th>
+                <th>total</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-detail let-i="rowIndex">
+            <tr>
+                <td></td>
+                <td>{{ detail.product.descripcion }}</td>
+                <td>{{ detail.quantity }}</td>
+                <td>
+                    {{ detail.price | number : "1.0-2" }}$
+                </td>
+                <td>
+                    {{ detail.discount }}% ({{
+                    (detail.discount / 100) *
+                    (detail.price * detail.quantity)
+                    | number : "1.0-2"
+                    }}$)
+                </td>
+                <td>
+                    {{
+                    detail.price * detail.quantity
+                    | number : "1.0-2"
+                    }}$
+                </td>
+                <td>
+                    {{
+                    detail.price * detail.quantity -
+                    (detail.discount / 100) *
+                    (detail.price *
+                    detail.quantity)
+                    | number : "1.0-2"
+                    }}$
+                </td>
+                <td>
+                    {{ detail.tax }}% ({{getDetailedTax(certificate.certificate_details, i) | number : "1.0-2"}}$)
+                </td>
+                <td class="text-center">
+                    ${{getTotal(certificate.certificate_details, i) | number : "1.0-2"}}
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </div>
-
-<p-dialog [(visible)]="clientDialog" [style]="{width: '450px'}" header="Client Details" [modal]="true"
-    styleClass="p-fluid">
-    <ng-template pTemplate="content">
-        <form [formGroup]="formClient" (ngSubmit)="submit()">
-            <br>
-
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="ruc">
-                    <label for="float-input">RUC or Identification</label>
-                </span>
-
-               <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="name">
-                    <label for="float-input">Client or Business Name</label>
-                </span>
-
-                <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="phone">
-                    <label for="float-input">Phone Number</label>
-                </span>
-
-               <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="address">
-                    <label for="float-input">Address</label>
-                </span>
-                <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="email">
-                    <label for="float-input">Email</label>
-                </span>
-
-            <!-- <button class="btn btn-primary" type="submit" [disabled]="!formProduct.valid">Save</button> -->
-        </form>
-    </ng-template>
-
-    <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formClient.valid"></button>
-    </ng-template>
-</p-dialog>

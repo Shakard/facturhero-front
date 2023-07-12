@@ -11,7 +11,6 @@ import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SigninComponent } from './demo/components/singin/singin.component';
 import { InvoiceComponent } from './demo/components/invoice/invoice.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ProductComponent } from './demo/components/product/product.component';
@@ -30,7 +29,6 @@ import { OfferComponent } from './demo/components/offer/offer.component';
 import { OfferService } from './demo/service/offer.service';
 import {DropdownModule} from 'primeng/dropdown';
 import {InputTextareaModule} from 'primeng/inputtextarea';
-import { SignupComponent } from './demo/components/signup/signup.component';
 import { InvoiceHistoryComponent } from './demo/components/invoice-history/invoice-history.component';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -41,6 +39,9 @@ import { InvoiceTemplateComponent } from './demo/components/invoice-template/inv
 import { CarouselModule } from 'primeng/carousel';
 import { InvoiceTemplateService } from './demo/service/invoice-template.service';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { ProvinceService } from './demo/service/province.service';
+import { TagModule } from 'primeng/tag';
+
 
 
 
@@ -49,15 +50,13 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 @NgModule({
     declarations: [
         AppComponent,
-        SigninComponent,
         InvoiceComponent,
         ProductComponent,
         ClientComponent,
         OfferComponent,
-        SignupComponent,
         InvoiceHistoryComponent,
         UserProfileComponent,
-        InvoiceTemplateComponent
+        InvoiceTemplateComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -82,12 +81,14 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
         FileUploadModule,
         TooltipModule,
         CarouselModule,
-        SweetAlert2Module
+        SweetAlert2Module,
+        TagModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, ClientService, OfferService, InvoiceTemplateService
+        PhotoService, ProductService, ClientService, OfferService, InvoiceTemplateService,
+        ProvinceService
     ],
     bootstrap: [AppComponent]
 })

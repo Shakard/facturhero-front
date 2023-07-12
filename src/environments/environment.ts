@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  URL_API: 'http://localhost/invoice-backend/public/api/auth/',
+  URL_API: 'http://localhost/invoice-backend/public/api/',//http://localhost
 };
 
 /*

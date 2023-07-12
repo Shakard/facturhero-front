@@ -27,8 +27,16 @@ export class ProductComponent {
         this.buildFormProduct();
     }
 
+    // getProducts() {
+    //     this.productService.getProducts().subscribe((data: Product[]) => {
+    //         this.products = data;
+    //         console.log(this.products);
+    //     });
+    // }
+
     getProducts() {
-        this.productService.getProducts().subscribe((data: Product[]) => {
+        const userId = localStorage.getItem('id');
+        this.productService.getProducts({ 'id': userId}).subscribe((data: Product[]) => {
             this.products = data;
             console.log(this.products);
         });
@@ -36,10 +44,12 @@ export class ProductComponent {
 
     buildFormProduct() {
         this.formProduct = new FormGroup({
-            code: new FormControl('', Validators.required),
+            userId: new FormControl(localStorage.getItem('id')),
+            // code: new FormControl('', Validators.required),
             item: new FormControl('', Validators.required),
             quantity: new FormControl('', Validators.required),
-            price: new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$")])
+            price: new FormControl('')
+            // price: new FormControl('', [Validators.required, Validators.pattern("^[0-9]*\.[0-9]{2}$")])
         });
     }
 
@@ -48,6 +58,7 @@ export class ProductComponent {
     }
 
     openNew() {
+        this.formProduct.patchValue({ userId: localStorage.getItem('id') });
         this.product = {};
         this.submitted = false;
         this.productDialog = true;

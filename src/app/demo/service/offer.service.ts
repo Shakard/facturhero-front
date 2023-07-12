@@ -18,18 +18,18 @@ export class OfferService {
     constructor(private http: HttpClient) { }
 
     getOffers(): Observable<Offer[]> {
-        return this.http.get<Offer[]>(this.url + 'offers')
+        return this.http.get<Offer[]>(this.url + 'auth/offers')
     }
 
     createOffer(offer: any): Observable<Offer> {
-        return this.http.post<Offer>(this.url + 'add-offer', JSON.stringify(offer), this.httpOptions)
+        return this.http.post<Offer>(this.url + 'auth/add-offer', JSON.stringify(offer), this.httpOptions)
     }
 
     updateOffer(id: any, offer: any): Observable<Offer> {
-        return this.http.put<Offer>(this.url + 'edit-offer/' + id, JSON.stringify(offer), this.httpOptions)
+        return this.http.put<Offer>(this.url + 'auth/edit-offer/' + id, JSON.stringify(offer), this.httpOptions)
     }
 
     deleteOffer(id: any) {
-        return this.http.delete<Offer>(this.url + 'delete-offer/' + id, this.httpOptions)
+        return this.http.delete<Offer>(this.url + 'auth/delete-offer/' + id, this.httpOptions)
     }
 }

@@ -19,19 +19,19 @@ export class ClientService {
     constructor(private http: HttpClient) { }
 
 
-    getClients(): Observable<Client[]> {
-        return this.http.get<Client[]>(this.url + 'clients')
+    getClients(id: any): Observable<Client[]> {
+        return this.http.post<Client[]>(this.url + 'auth/clients', id)
     }
 
     createClient(client: any): Observable<Client> {
-        return this.http.post<Client>(this.url + 'add-client', JSON.stringify(client), this.httpOptions)
+        return this.http.post<Client>(this.url + 'auth/add-client', JSON.stringify(client), this.httpOptions)
     }
 
     updateClient(id:any, client:any): Observable<Client> {
-        return this.http.put<Client>(this.url + 'edit-client/' + id, JSON.stringify(client), this.httpOptions)
+        return this.http.put<Client>(this.url + 'auth/edit-client/' + id, JSON.stringify(client), this.httpOptions)
     }
 
     deleteClient(id:any){
-        return this.http.delete<Client>(this.url + 'delete-client/' +id, this.httpOptions)
+        return this.http.delete<Client>(this.url + 'auth/delete-client/' +id, this.httpOptions)
       }
 }

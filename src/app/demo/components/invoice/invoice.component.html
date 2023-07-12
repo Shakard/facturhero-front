@@ -1,364 +1,697 @@
-<p-card [style]="{width: 'auto', margin: '40px 250px 10px'}" styleClass="p-card-shadow">
-    <ng-template pTemplate="header">
-        <div class="invoice-headar">
-            <div class="row g-0">
-                <div class="invoice-header">
-                    <div class="logo">
-                        <div style="z-index: -1;" *ngIf="this.user">
-                            <img src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}'
-                                alt=" " />
+<!-- <div [ngClass]="{'disabled':componentDisabled}">
+    <p-card [style]="{width: 'auto', margin: '40px 250px 10px'}" styleClass="p-card-shadow">
+        <ng-template pTemplate="header">
+            <div class="invoice-headar">
+                <div class="row g-0">
+                    <div class="invoice-header">
+                        <div class="logo" style="margin-bottom: auto; margin-top: auto;">
+                            <div style="z-index: -1;" *ngIf="this.user">
+                                <img src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}'
+                                    alt=" " />
+                            </div>
+                        </div>
+                        <div class="info" style="font-size: large;">
+                            <p>
+                                <span>Invoice: #{{ invoiceSerial }}</span>
+                            </p>
+                            <p>
+                                <span>Date: {{ currentDate }}</span>
+                            </p>
                         </div>
                     </div>
-                    <div class="info">
-                        <h1>Invoice</h1>
-                        <p>
-                            Invoice Number
-                            <span style="font-size: 13px">#{{ invoiceSerial }}</span>
-                        </p>
-                        <p>
-                            Invoice Date <span>{{ currentDate }}</span>
-                        </p>
+                </div>
+            </div>
+        </ng-template>
+        <br>
+        <div class="grid p-fluid">
+            <p-card [style]="{'width': '27rem', 'margin': '0em 7em 3em 5em'}">
+                <button *ngIf="!formInvoice.get('clientName').value" pButton pRipple label="Add Customer"
+                    icon="pi pi-plus" class="w-full p-3 text-md" (click)="openNew()"></button>
+                <div>
+                    <div class="grid">
+                        <h2 style="margin-left: 10px; color: #ff3200;" *ngIf="formInvoice.get('clientName')">
+                            {{formInvoice.get('clientName').value}}</h2>
+                        <button style="transform: translate(0px, -15px);" *ngIf="formInvoice.get('clientName').value"
+                            pButton pRipple type="button" icon="pi pi-times"
+                            class="p-button-rounded p-button-danger p-button-text" (click)="removeClient()"></button>
+
+                    </div>
+                    <p *ngIf="formInvoice.get('clientMail').value">
+                        {{formInvoice.get('clientMail').value}} <br />
+                        {{formInvoice.get('clientProvince').value}}
+                        {{formInvoice.get('clientCity').value}} <br />
+                        {{formInvoice.get('clientLine1').value}} <br />
+                        {{formInvoice.get('clientLine2').value}} <br />
+                        Zip Code:
+                        {{formInvoice.get('clientZipCode').value}} <br />
+                        Phone Number:
+                        {{formInvoice.get('clientPhone').value}} <br />
+                    </p>
+                </div>
+            </p-card>
+            <p-card [style]="{'width': '27em'}">
+                <div style="text-align:right" *ngIf="this.user">
+                    <h2 style=" color: #ff3200;">{{this.user.name}}</h2>
+                    <p>
+                        {{this.user.user_ruc}} <br />
+                        {{this.user.user_web}} <br />
+                        {{this.user.email}} <br />
+                        {{this.user.address.province}}
+                        {{this.user.address.city}}<br />
+                        {{this.user.address.line1}}
+                        {{this.user.address.line2}}<br />
+                        Zip Code:
+                        {{this.user.address.zip}}<br />
+                        Phone Number:
+                        {{this.user.phone}} <br />
+                    </p>
+                </div>
+            </p-card>
+        </div>
+
+        <form [formGroup]="formInvoice">
+            <p-card *ngIf="formInvoice.get('clientName').value">
+                <div class="card-body">
+                    <div formArrayName="details">
+                        <p-table [value]="details.controls" (onRowReorder)="onRowReorder($event)">
+                            <ng-template pTemplate="header">
+                                <tr class="tr">
+                                    <th style="width:3rem"></th>
+                                    <th>
+                                        <button pButton pRipple type="button" icon="pi pi-plus"
+                                            class="p-button-rounded p-button-success" style="width: 25px; height: 25px;"
+                                            (click)="openNewProduct()"></button>
+                                    </th>
+                                    <th class="pl0 text-start">Item Description</th>
+                                    <th class="text-center">Price</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Total (base)</th>
+                                    <th class="text-center">Discount</th>
+                                    <th class="text-center">Total without tax</th>
+                                    <th class="text-center">tax</th>
+                                    <th class="text-center">Total</th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-controls let-i="rowIndex">
+                                <tr [formGroupName]="i" [pReorderableRow]="i">
+                                    <td>
+                                        <span class="pi pi-bars" pReorderableRowHandle></span>
+                                    </td>
+                                    <td>
+                                        <button pButton pRipple type="button" icon="pi pi-times"
+                                            class="p-button-rounded p-button-danger" style="width: 25px; height: 25px;"
+                                            (click)="removeDetail(i)"></button>
+                                    </td>
+                                    <td class="pl0">
+                                        {{this.details.at(i).get('item').value}}
+                                    </td>
+                                    <td class="text-center">
+                                        ${{this.details.at(i).get('price').value}}
+                                    </td>
+                                    <td class="text-center">
+
+                                        <p-inputNumber formControlName="quantity" [showButtons]="true"
+                                            buttonLayout="vertical" (onInput)="setQuantity($event, i)"
+                                            [size]="1"></p-inputNumber>
+                                    </td>
+                                    <td class="text-center">
+                                        ${{getTotalBase(i) | number : "1.0-2"}}
+                                    </td>
+                                    <td class="text-center">
+                                        <input id="discoutn-input" type="text" pInputText formControlName="discountText"
+                                            style="width: 80px;" (keypress)="validate($event)" (change)="update()"
+                                            pattern="[0-9]{1,9}[%]?"
+                                            [ngClass]="{ 'is-invalid': submitted && this.details.at(i).get('discountText').errors }">
+                                        (${{getDetailedDiscount(i) | number : "1.0-2"}})
+                                        <div *ngIf="this.details.at(i)?.get('discountText').errors">
+                                            <small *ngIf="this.details.at(i).get('discountText').errors['pattern']">
+                                                *Plate number not valid. <a href="https://bit.ly/PicoPlaca01">for more
+                                                    information</a>
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        ${{getTotalWithoutTax(i) | number : "1.0-2"}}
+                                    </td>
+                                    <td class="text-center">
+                                        <p-dropdown optionValue="value" formControlName="tax" placeholder="Select a Tax"
+                                            [options]="taxes" optionLabel="name" appendTo="body"
+                                            (onChange)="onChangeTax(i)"></p-dropdown>
+                                        (${{getDetailedTax(i) | number : "1.0-2"}})
+                                    </td>
+                                    <td class="text-center">
+                                        ${{getTotal(i) | number : "1.0-2"}}
+                                    </td>
+
+
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+
+                                <div style="display: grid; grid-template-columns: 70% 40%;; align-items: end;"
+                                    *ngIf="total">
+                                    <form [formGroup]="formInvoice">
+                                        <div>
+                                            <span class="p-float-label">
+                                                <textarea formControlName="note" id="float-input" rows="5" cols="40"
+                                                    pInputTextarea></textarea>
+                                                <label for="float-input">Note</label>
+                                            </span>
+                                        </div>
+                                    </form>
+                                    <div>
+                                        <tr class="tr2">
+                                            <td>Total (Base)</td>
+                                            <td class="text-end">${{getGrandTotalBase() | number : "1.0-2"}}</td>
+                                        </tr>
+                                        <tr class="tr2" *ngFor="let detail of details.controls; let i=index"
+                                            style="color:green">
+                                            <ng-container *ngIf="detail.get('discount').value!==0">
+                                                <td>Discount {{detail.get('discount').value}}% of
+                                                    ${{detail.get('price').value}}</td>
+                                                <td class="text-end">-
+                                                    ${{this.details.at(i).get('detailedDiscount').value |
+                                                    number : "1.0-2"}}</td>
+                                            </ng-container>
+                                        </tr>
+                                        <tr class="tr2">
+                                            <td>SubTotal</td>
+                                            <td class="text-end">${{getSubtotal() | number : "1.0-2"}}</td>
+                                        </tr>
+                                        <tr class="tr2" *ngFor="let detail of details.controls; let i=index"
+                                            style="color:orange">
+                                            <ng-container *ngIf="detail.get('tax').value!==0">
+                                                <td>Tax {{detail.get('tax').value}}% of ${{getTotalWithoutTax(i)}}</td>
+                                                <td class="text-end">+ ${{getDetailedTax(i) | number : "1.0-2"}}</td>
+                                            </ng-container>
+                                        </tr>
+                                        <tr class="tr2" style=" color: #ff3200;">
+                                            <td>
+                                                Grand Total
+                                            </td>
+                                            <td class="f-w-600 text-end active-color">${{getGrandTotal() | number :
+                                                "1.0-2"}}</td>
+                                        </tr>
+                                        <tr>
+                                                <p-dropdown optionValue="value" (onChange)="onChangePayment($event)"
+                                                    placeholder="Select a type of payment" [options]="payments"
+                                                    optionLabel="name"></p-dropdown>
+                                        </tr>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <div style="margin-top: 10px;">
                     </div>
                 </div>
+
+
+                <div class="grid-container">
+                    <div></div>
+                    <div>
+
+                        <button *ngIf="total" pButton pRipple label="Preview Document" class="p-3 text-md"
+                            (click)="submitPreviewInvoice()"></button>
+                    </div>
+                </div>
+            </p-card>
+        </form>
+
+        <ng-template pTemplate="footer">
+
+            <div class="invoice-btn-section clearfix d-print-none">
+
+                <button *ngIf="formInvoice.get('clientName').value && !formInvoice.get('id').value" pButton pRipple
+                    label="Clear invoice" style="margin-right: 20px;" class="p-3 text-md"
+                    (click)="resetForm()"></button>
+                <button *ngIf="total && !formInvoice.get('id').value && sent===false" pButton pRipple
+                    label="Create Invoice" style="background-color: #0B253A;" class="p-3 text-md"
+                    (click)="onSubmitStore()"></button>
+                <button *ngIf="total && formInvoice.get('id').value && sent===false" pButton pRipple
+                    label="Send Invoice" style="background-color: #0B253A;" class="p-3 text-md"
+                    (click)="onSubmitInvoice()"></button>
+
+
+
+
+            </div>
+
+        </ng-template>
+    </p-card>
+
+    <p-dialog [(visible)]="clientDialog" [style]="{width: 'auto'}" header="Client Details" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <p-table #dt [value]="clients" [rows]="5" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
+                [rowHover]="true" dataKey="id" [(selection)]="selectedClient" selectionMode="single"
+                (onRowSelect)="onRowSelect($event)"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" [globalFilterFields]="['razon_social','ruc']">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
+                                placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="min-width:15rem">Identification</th>
+                        <th style="min-width:15rem">Name or Business </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-client>
+                    <tr [pSelectableRow]="client">
+                        <td>{{client.identificacion}}</td>
+                        <td>{{client.razon_social}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="productDialog" [style]="{width: 'auto'}" header="Product Details" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <p-table #dt [value]="products" [rows]="5" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
+                [rowHover]="true" dataKey="id" [(selection)]="selectedProduct" selectionMode="single"
+                (onRowSelect)="onRowSelectProduct($event)"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" [globalFilterFields]="['codigo','descripcion']">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
+                                placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="min-width:15rem">Code </th>
+                        <th style="min-width:15rem">Item </th>
+                        <th style="min-width:15rem">Quantity </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product>
+                    <tr [pSelectableRow]="product">
+                        <td>{{product.codigo}}</td>
+                        <td>{{product.descripcion}}</td>
+                        <td>{{product.cantidad}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" (click)="productDialog=false" icon="pi pi-times"
+                class="p-button-text"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog header="Quantity of Products" [(visible)]="quantityDialog" [style]="{width: 'auto'}">
+        <p-inputNumber [(ngModel)]="quantity"></p-inputNumber>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="updateQuantity()" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
+    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="line-spin-clockwise-fade-rotating"
+        [fullScreen]="true">
+        <p style="color: white"> Loading... </p>
+    </ngx-spinner>
+
+
+</div> -->
+<div [ngClass]="{'disabled':componentDisabled}">
+
+    <div class="card p-fluid"
+        style="background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #f05123 0%, #faf7c3 100%);">
+        <div class="p-formgrid grid">
+            <div class="field col md:flex-row align-items-center text-center" *ngIf="this.user">
+                <img style="max-width: 150px; width: auto;"
+                    src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}' alt=" " />
+            </div>
+            <div class="field col md:flex-row align-items-center align-self-center text-center font-bold text-2xl"
+                *ngIf="this.user" style="color: aliceblue;">
+                <p>
+                    <span>Invoice: #{{ invoiceSerial }}</span>
+                </p>
+                <p>
+                    <span>Date: {{ currentDate }}</span>
+                </p>
             </div>
         </div>
-    </ng-template>
-    <br>
-    <div class="grid p-fluid">
-        <p-card [style]="{'width': '27rem', 'margin': '0em 7em 3em 5em'}">
-            <!-- <button *ngIf="!formInvoice.get('clientName').value" pButton pRipple label="Add Customer" icon="pi pi-plus"
-                class="p-button-success mr-2" (click)="openNew()"></button> -->
-            <button *ngIf="!formInvoice.get('clientName').value" pButton pRipple label="Add client" icon="pi pi-plus"
-                class="w-full p-3 text-md" (click)="openNew()"></button>
-            <div>
-                <div class="grid">
-                    <h2 style="margin-left: 10px; color: #ff3200;" *ngIf="formInvoice.get('clientName')">
-                        {{formInvoice.get('clientName').value}}</h2>
-                    <button style="transform: translate(0px, -15px);" *ngIf="formInvoice.get('clientName').value"
-                        pButton pRipple type="button" icon="pi pi-times"
-                        class="p-button-rounded p-button-danger p-button-text" (click)="removeClient()"></button>
-
-                </div>
-                <p>
-                    <!-- {{formInvoice.get('ruc').value}} <br /> -->
-                    {{formInvoice.get('clientMail').value}} <br />
-                    {{formInvoice.get('clientPhone').value}} <br />
-                    {{formInvoice.get('clientAddress').value}}<br />
-                </p>
-            </div>
-        </p-card>
-        <p-card [style]="{'width': '27em'}">
-            <div style="text-align:right" *ngIf="this.user">
-                <h2 style=" color: #ff3200;">{{this.user.name}}</h2>
-                <p>
-                    {{this.user.user_ruc}} <br />
-                    {{this.user.user_web}} <br />
-                    {{this.user.email}} <br />
-                    {{this.user.address}}<br />
-                    {{this.user.phone}} <br />
-                </p>
-            </div>
-        </p-card>
     </div>
 
-    <form [formGroup]="formInvoice">
-        <p-card *ngIf="formInvoice.get('clientName').value">
-            <div class="card-body">
-                <div formArrayName="details">
-                    <p-table [value]="details.controls" (onRowReorder)="onRowReorder($event)">
-                        <ng-template pTemplate="header">
-                            <tr class="tr">
-                                <th style="width:3rem"></th>
-                                <th>
-                                    <button pButton pRipple type="button" icon="pi pi-plus"
-                                        class="p-button-rounded p-button-success" style="width: 25px; height: 25px;"
-                                        (click)="openNewProduct()"></button>
-                                </th>
-                                <th class="pl0 text-start">Item Description</th>
-                                <th class="text-center">Price</th>
-                                <th class="text-center">Quantity</th>
-                                <th class="text-center">Total (base)</th>
-                                <th class="text-center">Discount</th>
-                                <th class="text-center">Total without tax</th>
-                                <th class="text-center">tax</th>
-                                <th class="text-center">Total</th>
-                                <!-- <th class="text-center">
-                                    Total without discount
-                                </th> -->
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-controls let-i="rowIndex">
-                            <tr [formGroupName]="i" [pReorderableRow]="i">
-                                <td>
-                                    <span class="pi pi-bars" pReorderableRowHandle></span>
-                                </td>
-                                <td>
-                                    <button pButton pRipple type="button" icon="pi pi-times"
-                                        class="p-button-rounded p-button-danger" style="width: 25px; height: 25px;"
-                                        (click)="removeDetail(i)"></button>
-                                </td>
-                                <td class="pl0">
-                                    {{this.details.at(i).get('item').value}}
-                                </td>
-                                <td class="text-center">
-                                    ${{this.details.at(i).get('price').value}}
-                                </td>
-                                <td class="text-center">
-                                    <!-- <input type="text" formControlName="quantity" (change)="setQuantity($event, i)"
-                                        style="width: 50px;" /> -->
-                                    <p-inputNumber formControlName="quantity" (change)="setQuantity($event, i)"
-                                        [size]="1"></p-inputNumber>
-                                </td>
-                                <td class="text-center">
-                                    ${{getTotalBase(i) | number : "1.0-2"}}
-                                </td>
-                                <td class="text-center">
-                                    <p-inputNumber formControlName="discount" suffix="%" [size]="1"></p-inputNumber>
-                                    (${{getDetailedDiscount(i) | number : "1.0-2"}})
-                                </td>
-                                <td class="text-center">
-                                    ${{getTotalWithoutTax(i) | number : "1.0-2"}}
-                                </td>
-                                <td class="text-center">
-                                    <p-dropdown optionValue="value" formControlName="tax" placeholder="Select a Tax"
-                                        [options]="taxes" optionLabel="name" appendTo="body"
-                                        (onChange)="onChangeTax(i)"></p-dropdown>
-                                    <!-- <p-inputNumber  formControlName="tax" suffix="%" [size]="1"></p-inputNumber> -->
-                                    (${{getDetailedTax(i) | number : "1.0-2"}})
-                                </td>
-                                <td class="text-center">
-                                    ${{getTotal(i) | number : "1.0-2"}}
-                                </td>
-
-                                <!-- <td class="text-center">
-                                    ${{getTotalWithoutDiscount(i) | number : "1.0-2"}}
-                                </td> -->
-                                <!-- <td class="text-end">${{this.details.at(i).get('amount').value}}</td> -->
-
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="summary">
-                            <!-- <div style="display: grid; grid-template-columns: 70% 30%;; align-items: end;">
-                                <div></div>
-                                <div *ngIf="total">
-                                    <tr class="tr2">
-                                        <td>SubTotal</td>
-                                        <td class="text-end">${{subTotal | number : "1.0-2"}}</td>
-                                    </tr>
-                                    <tr class="tr2">
-                                        <td>Tax 12%</td>
-                                        <td class="text-end">${{tax | number : "1.0-2"}}</td>
-                                    </tr>
-                                    <tr class="tr2" style=" color: #ff3200;">
-                                        <td>
-                                            Grand Total
-                                        </td>
-                                        <td class="f-w-600 text-end active-color">${{total | number : "1.0-2"}}</td>
-                                    </tr>
-                                </div>
-                            </div> -->
-                            <div style="display: grid; grid-template-columns: 70% 40%;; align-items: end;">
-                                <form [formGroup]="formInvoice">
-                                    <div>
-                                        <span class="p-float-label">
-                                            <textarea formControlName="note" id="float-input" rows="5" cols="80"
-                                                pInputTextarea></textarea>
-                                            <label for="float-input">Note</label>
-                                        </span>
-                                    </div>
-                                </form>
-                                <div *ngIf="total">
-                                    <tr class="tr2">
-                                        <td>Total (Base)</td>
-                                        <td class="text-end">${{getGrandTotalBase() | number : "1.0-2"}}</td>
-                                    </tr>
-                                    <tr class="tr2" *ngFor="let detail of details.controls; let i=index"
-                                        style="color:green">
-                                        <ng-container *ngIf="detail.get('discount').value!==0">
-                                            <td>Discount {{detail.get('discount').value}}% of
-                                                ${{detail.get('price').value}}</td>
-                                            <td class="text-end">- ${{getDetailedDiscount(i) | number : "1.0-2"}}</td>
-                                        </ng-container>
-                                    </tr>
-                                    <tr class="tr2">
-                                        <td>SubTotal</td>
-                                        <td class="text-end">${{getSubtotal() | number : "1.0-2"}}</td>
-                                    </tr>
-                                    <tr class="tr2" *ngFor="let detail of details.controls; let i=index"
-                                        style="color:orange">
-                                        <ng-container *ngIf="detail.get('tax').value!==0">
-                                            <td>Tax {{detail.get('tax').value}}% of ${{getTotalWithoutTax(i)}}</td>
-                                            <td class="text-end">+ ${{getDetailedTax(i) | number : "1.0-2"}}</td>
-                                        </ng-container>
-                                    </tr>
-                                    <tr class="tr2" style=" color: #ff3200;">
-                                        <td>
-                                            Grand Total
-                                        </td>
-                                        <td class="f-w-600 text-end active-color">${{getGrandTotal() | number :
-                                            "1.0-2"}}</td>
-                                    </tr>
-                                </div>
+    <div class="card p-fluid">
+        <div class="p-formgrid grid">
+            <div class="field col md:flex-row align-items-center text-center" *ngIf="this.user">
+                <h2 style=" color: #ff3200;">{{this.user.name}}</h2>
+                <h4 class="font-bold text-gray-900 line-height-2">
+                    <span class="font-light block">
+                        {{this.user.user_ruc}} <br />
+                        <div *ngIf="this.user.user_web">{{this.user.user_web}}</div>
+                        {{this.user.email}} <br />
+                        {{this.user.address.line1}}
+                        {{this.user.address.line2}}<br />
+                        {{this.user.address.city}}
+                        <!-- {{this.user.address.province}} -->
+                        {{this.user.address.country}}
+                        <br />
+                        Zip Code:
+                        {{this.user.address.zip}}<br />
+                        Phone Number:
+                        {{this.user.phone}} <br />
+                    </span>
+                </h4>
+            </div>
+            <div class="field col md:flex-row align-items-center text-center">
+                <button *ngIf="!formInvoice.get('clientName').value" pButton pRipple label="Add Customer"
+                    icon="pi pi-plus" class="text-md" (click)="openNew()"></button>
+                <div>
+                    <h2 style="color: #ff3200; cursor: pointer;" *ngIf="formInvoice.get('clientName')"
+                        (click)="openNew()">
+                        {{formInvoice.get('clientName').value}}
+                    </h2>
+                    <h4 *ngIf="formInvoice.get('clientMail').value" class="font-bold text-gray-900 line-height-2">
+                        <span class="font-light block">
+                            {{formInvoice.get('clientIdentification').value}} <br />
+                            {{formInvoice.get('clientMail').value}} <br />
+                            <!-- {{formInvoice.get('clientProvince').value}} -->
+                            {{formInvoice.get('clientLine1').value}} <br />
+                            <div *ngIf="formInvoice.get('clientLine2').value">{{formInvoice.get('clientLine2').value}}
                             </div>
-                        </ng-template>
-                    </p-table>
-                </div>
-
-                <div style="margin-top: 10px;">
+                            {{formInvoice.get('clientCity').value}}
+                            {{formInvoice.get('clientCountry').value}}
+                            <br />
+                            Zip Code:
+                            {{formInvoice.get('clientZipCode').value}} <br />
+                            Phone Number:
+                            {{formInvoice.get('clientPhone').value}} <br />
+                        </span>
+                    </h4>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <button *ngIf="total" pButton pRipple label="Preview Document" style="margin-left: 770px; margin-top: 20px;"
-                class="p-3 text-md" (click)="submitPreviewInvoice()"></button>
-        </p-card>
+    <form [formGroup]="formInvoice" *ngIf="formInvoice.get('clientName').value">
+        <div formArrayName="details">
+            <p-table [value]="details.controls" (onRowReorder)="onRowReorder($event)">
+                <ng-template pTemplate="header">
+                    <tr class="tr">
+                        <th style="width:3rem"></th>
+                        <th>
+                            <button pButton pRipple type="button" icon="pi pi-plus"
+                                class="p-button-rounded p-button-success" style="width: 25px; height: 25px;"
+                                (click)="openNewProduct()"></button>
+                        </th>
+                        <th class="pl0 text-start">Item Description</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Total (base)</th>
+                        <th class="text-center">Discount</th>
+                        <th class="text-center">Total without tax</th>
+                        <th class="text-center">tax
+                            <form [formGroup]="formInvoice">
+                                <p-dropdown optionValue="value" formControlName="mainTax" placeholder="Select a Tax"
+                                    [options]="taxes" optionLabel="name" appendTo="body"
+                                    (onChange)="onChangeMainTax(this.formInvoice.get('mainTax').value)"></p-dropdown>
+                            </form>
+                        </th>
+                        <th class="text-center">Total</th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-controls let-i="rowIndex">
+                    <tr [formGroupName]="i" [pReorderableRow]="i">
+                        <td>
+                            <span class="pi pi-bars" pReorderableRowHandle></span>
+                        </td>
+                        <td>
+                            <button pButton pRipple type="button" icon="pi pi-times"
+                                class="p-button-rounded p-button-danger" style="width: 25px; height: 25px;"
+                                (click)="removeDetail(i)"></button>
+                        </td>
+                        <td class="pl0">
+                            {{this.details.at(i).get('item').value}}
+                        </td>
+                        <td class="text-center">
+                            ${{this.details.at(i).get('price').value}}
+                        </td>
+                        <td class="text-center">
+                            <p-inputNumber formControlName="quantity" [showButtons]="true" buttonLayout="vertical"
+                                (onInput)="setQuantity($event, i)" [size]="1"></p-inputNumber>
+                        </td>
+                        <td class="text-center">
+                            ${{getTotalBase(i) | number : "1.0-2"}}
+                        </td>
+                        <td class="text-center">
+                            <input id="discoutn-input" type="text" pInputText formControlName="discountText"
+                                style="width: 80px;" (keypress)="validate($event)" (change)="update()"
+                                pattern="[0-9]{1,9}[%]?"
+                                [ngClass]="{ 'is-invalid': submitted && this.details.at(i).get('discountText').errors }">
+                            (${{getDetailedDiscount(i) | number : "1.0-2"}})
+                            <div *ngIf="this.details.at(i)?.get('discountText').errors">
+                                <!-- <small *ngIf="this.details.at(i).get('discountText').errors['pattern']">
+                                    *Plate number not valid. <a href="https://bit.ly/PicoPlaca01">for more
+                                        information</a>
+                                </small> -->
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            ${{getTotalWithoutTax(i) | number : "1.0-2"}}
+                        </td>
+                        <td class="text-center">
+                            <!-- <p-dropdown optionValue="value" formControlName="tax" placeholder="Select a Tax"
+                                [options]="taxes" optionLabel="name" appendTo="body"
+                                (onChange)="onChangeTax(i)"></p-dropdown> -->
+                            (${{getDetailedTax(i) | number : "1.0-2"}})
+                        </td>
+                        <td class="text-center">
+                            ${{getTotal(i) | number : "1.0-2"}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div *ngIf="total" class="card p-fluid" style="margin-bottom: 0;">
+                <div class="p-formgrid grid">
+                    <div class="field col md:flex-row align-items-center text-center" *ngIf="this.user">
+                        <form [formGroup]="formInvoice">
+                            <div style="min-width: 100px;">
+                                <span class="p-float-label">
+                                    <textarea formControlName="note" [autoResize]="true" id="float-input" rows="5"
+                                        cols="40" pInputTextarea></textarea>
+                                    <label class="font-normal text-gray-900" for="float-input">Note</label>
+                                </span>
+                            </div>
+                        </form><br>
+                    </div>
+                    <div class="field col md:flex-row text-center">
+                        <div class="field col md:flex-row text-right font-normal block text-gray-900 line-height-2 text-xl"
+                            *ngIf="this.user">
+                            <div class="grid">
+                                <div class="text-right col md">Total (Base)</div>
+                                <span class="text-left col md">${{getGrandTotalBase() | number : "1.0-2"}}</span>
+                            </div>
+                            <div *ngFor="let detail of details.controls; let i=index" style="color:green">
+                                <ng-container *ngIf="detail.get('discount').value!=='0'">
+                                    <div class="grid">
+                                        <div class="text-right col md">Discount {{detail.get('discount').value | number : "1.0-0"}}% of
+                                            ${{getTotalBase(i) | number : "1.0-2"}}</div>
+                                        <span
+                                            class="text-left col md">${{this.details.at(i).get('detailedDiscount').value
+                                            |
+                                            number : "1.0-2"}}</span>
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <div class="grid">
+                                <div class="text-right col md">SubTotal</div>
+                                <span class="text-left col md">${{getSubtotal() | number : "1.0-2"}}</span>
+                            </div>
+                            <div class="tr2" *ngFor="let detail of details.controls; let i=index" style="color:orange">
+                                <ng-container *ngIf="detail.get('tax').value!==0">
+                                    <div class="grid">
+                                        <div class="text-right col md">Tax {{detail.get('tax').value}}% of
+                                            ${{getTotalWithoutTax(i)}}</div>
+                                        <span class="text-left col md">${{getDetailedTax(i) | number : "1.0-2"}}</span>
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <div class="grid font-bold" style=" color: #ff3200;">
+                                <div class="text-right col md">Grand Total</div>
+                                <span class="text-left col md">${{getGrandTotal() | number :"1.0-2"}}</span>
+                            </div>
+                            <p-dropdown class="text-center" optionValue="value" (onChange)="onChangePayment($event)"
+                                placeholder="Select a type of payment" [options]="payments" optionLabel="name">
+                            </p-dropdown><br>
+                            <button *ngIf="total" pButton pRipple label="Preview Document" class="p-3 text-md"
+                                (click)="submitPreviewInvoice()">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="p-formgrid grid">
+                    <div class="field col md:flex-row align-items-center text-center" *ngIf="this.user">
+                        <button *ngIf="formInvoice.get('clientName').value && !formInvoice.get('id').value" pButton
+                            pRipple label="Clear invoice" style="margin-right: 20px;" class="p-3 text-md"
+                            (click)="resetForm()"></button>
+                    </div>
+                    <div class="field col md:flex-row align-items-center text-center">
+                        <button *ngIf="total && !formInvoice.get('id').value && sent===false" pButton pRipple
+                            label="Create Invoice" style="background-color: #0B253A;" class="p-3 text-md"
+                            (click)="onSubmitStore()"></button>
+                        <button *ngIf="total && formInvoice.get('id').value && sent===false" pButton pRipple
+                            label="Send Invoice" style="background-color: #0B253A;" class="p-3 text-md"
+                            (click)="onSubmitInvoice()"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 
-    <ng-template pTemplate="footer">
-        <!-- <div class="invoice-bottom">
-            <div class="row">
-                <div class="col-lg-6 col-md-8 col-sm-7">
-                    <div class="mb-30 dear-client">
-                        <h3 class="inv-title-1" style="  font-weight: 500; font-size: 16px;">Terms & Conditions</h3>
-                        <p>
-                            Lorem Ipsum is simply dummy text of the printing and
-                            typesetting industry. Lorem Ipsum has been typesetting
-                            industry. Lorem Ipsum
-                        </p>
+    <p-dialog [(visible)]="clientDialog" [style]="{width: 'auto'}" header="Client Details" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <p-table #dt [value]="clients" [rows]="5" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
+                [rowHover]="true" dataKey="id" [(selection)]="selectedClient" selectionMode="single"
+                (onRowSelect)="onRowSelect($event)"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" [globalFilterFields]="['razon_social','ruc']">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
+                                placeholder="Search..." />
+                        </span>
                     </div>
-                </div>
-                <div class="col-lg-6 col-md-4 col-sm-5">
-                    <div class="mb-30 payment-method">
-                        <h3 class="inv-title-1">Payment Method</h3>
-                        <ul class="payment-method-list-1 text-14">
-                            <li><strong>Account No:</strong> 00 123 647 840</li>
-                            <li><strong>Account Name:</strong> Jhon Doe</li>
-                            <li><strong>Branch Name:</strong> xyz</li>
-                        </ul>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="min-width:15rem">Identification</th>
+                        <th style="min-width:15rem">Name or Business </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-client>
+                    <tr [pSelectableRow]="client">
+                        <td>{{client.identificacion}}</td>
+                        <td>{{client.razon_social}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="productDialog" [style]="{width: 'auto'}" header="Product Details" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <p-table #dt [value]="products" [rows]="5" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
+                [rowHover]="true" dataKey="id" [(selection)]="selectedProduct" selectionMode="single"
+                (onRowSelect)="onRowSelectProduct($event)"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" [globalFilterFields]="['codigo','descripcion']">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
+                                placeholder="Search..." />
+                        </span>
                     </div>
-                </div>
-            </div>
-        </div> -->
-        <div class="invoice-btn-section clearfix d-print-none">
-            <!-- <a class="btn btn-lg btn-print">
-                <i class="fa fa-print"></i> Cancel
-            </a> -->
-            <!-- <a id="invoice_download_btn" (click)="onSubmitInvoice()" class="btn btn-lg btn-download btn-theme">
-                <i class="fa fa-download"></i> Send Invoice
-            </a> -->
-            <button *ngIf="formInvoice.get('clientName').value" pButton pRipple label="Clear invoice"
-                style="margin-right: 20px;" class="p-3 text-md" (click)="resetForm()"></button>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="min-width:15rem">Code </th>
+                        <th style="min-width:15rem">Item </th>
+                        <th style="min-width:15rem">Quantity </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product>
+                    <tr [pSelectableRow]="product">
+                        <td>{{product.codigo}}</td>
+                        <td>{{product.descripcion}}</td>
+                        <td>{{product.cantidad}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
 
-            <button *ngIf="total" pButton pRipple label="Send Invoice" style="background-color: #0B253A;"
-                class="p-3 text-md" (click)="onSubmitInvoice()"></button>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" (click)="productDialog=false" icon="pi pi-times"
+                class="p-button-text"></button>
+        </ng-template>
+    </p-dialog>
 
-            <!-- <a id="invoice_download_btn" (click)="onSubmitStore()" class="btn btn-lg btn-download btn-theme">
-                <i class="fa fa-download"></i> store
-            </a> -->
+    <p-dialog [modal]="true" [(visible)]="newInvoiceSerialDialog" [breakpoints]="{ '960px': '75vw' }"
+        [style]="{ width: 'auto' }" [resizable]="false">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold">Please enter a invoice number</span>
+        </ng-template>
+        <p class="m-0">
+            The invoice number must contain 9 characters; Example"000000001".
+        </p>
+        <p class="m-0">
+            This number must be entered for the first time creating the invoice.
+        </p><br>
+        <div class="flex py-2 justify-content-center">
+            <input pInputText id="username" aria-describedby="username-help" [(ngModel)]="invoiceSerial" />
         </div>
-        <!-- <div class="invoice-contact clearfix">
-            <div class="row g-0">
-                <div class="col-lg-9 col-md-11 col-sm-12">
-                    <div class="contact-info">
-                        <a href="tel:+55-4XX-634-7071"><i class="fa fa-phone"></i> +593 999 869
-                            607</a>
-                        <a href="tel:info@themevessel.com"><i class="fa fa-envelope"></i>
-                            info@dummymail.com</a>
-                        <a href="tel:info@themevessel.com" class="mr-0 d-none-580"><i class="fa fa-map-marker"></i> 5
-                            Carchi,
-                            Quito</a>
-                    </div>
-                </div>
+        <ng-template pTemplate="footer">
+            <p-button (click)="onSubmitInvoice()" icon="pi pi-check" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [modal]="true" [(visible)]="keyPasswordDialog" [breakpoints]="{ '960px': '75vw' }"
+        [style]="{ width: 'auto' }" [resizable]="false">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold">Please enter signature key password</span>
+        </ng-template>
+        <br><br>
+        <form [formGroup]="formInvoice">
+            <div class="flex py-2 justify-content-center">
+                <span class="p-float-label">
+                    <p-password formControlName="userKeyPass" [feedback]="false" [toggleMask]="true"></p-password>
+                    <label for="password">Password</label>
+                </span>
             </div>
-        </div> -->
-    </ng-template>
-</p-card>
+        </form>
+        <ng-template pTemplate="footer">
+            <p-button (click)="onSubmitInvoice()" icon="pi pi-check" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
 
-<p-dialog [(visible)]="clientDialog" [style]="{width: 'auto'}" header="Client Details" [modal]="true"
-    styleClass="p-fluid">
-    <ng-template pTemplate="content">
-        <p-table #dt [value]="clients" [rows]="5" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
-            [rowHover]="true" dataKey="id" [(selection)]="selectedClient" selectionMode="single"
-            (onRowSelect)="onRowSelect($event)"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true" [globalFilterFields]="['razon_social','ruc']">
-            <ng-template pTemplate="caption">
-                <div class="flex align-items-center justify-content-between">
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
-                            placeholder="Search..." />
-                    </span>
-                </div>
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="min-width:15rem">Ruc or Identification </th>
-                    <th style="min-width:15rem">Name or Business </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-client>
-                <tr [pSelectableRow]="client">
-                    <td>{{client.ruc}}</td>
-                    <td>{{client.razon_social}}</td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </ng-template>
+    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="line-spin-clockwise-fade-rotating"
+        [fullScreen]="true">
+        <p style="color: white"> Loading... </p>
+    </ngx-spinner>
 
-    <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
-        <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formClient.valid"></button> -->
-    </ng-template>
-</p-dialog>
-
-<p-dialog [(visible)]="productDialog" [style]="{width: 'auto'}" header="Product Details" [modal]="true"
-    styleClass="p-fluid">
-    <ng-template pTemplate="content">
-        <p-table #dt [value]="products" [rows]="5" [paginator]="true" [tableStyle]="{'min-width': '75rem'}"
-            [rowHover]="true" dataKey="id" [(selection)]="selectedProduct" selectionMode="single"
-            (onRowSelect)="onRowSelectProduct($event)"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true" [globalFilterFields]="['codigo','descripcion']">
-            <ng-template pTemplate="caption">
-                <div class="flex align-items-center justify-content-between">
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')"
-                            placeholder="Search..." />
-                    </span>
-                </div>
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="min-width:15rem">Code </th>
-                    <th style="min-width:15rem">Item </th>
-                    <th style="min-width:15rem">Quantity </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-product>
-                <tr [pSelectableRow]="product">
-                    <td>{{product.codigo}}</td>
-                    <td>{{product.descripcion}}</td>
-                    <td>{{product.cantidad}}</td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </ng-template>
-
-    <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" (click)="productDialog=false" icon="pi pi-times"
-            class="p-button-text"></button>
-        <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formClient.valid"></button> -->
-    </ng-template>
-</p-dialog>
-
-<p-dialog header="Quantity of Products" [(visible)]="quantityDialog" [style]="{width: 'auto'}">
-    <p-inputNumber [(ngModel)]="quantity"></p-inputNumber>
-    <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="updateQuantity()" label="Ok" styleClass="p-button-text"></p-button>
-    </ng-template>
-</p-dialog>
-<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="line-spin-clockwise-fade-rotating"
-    [fullScreen]="true">
-    <p style="color: white"> Loading... </p>
-</ngx-spinner>
+    <p-dialog [modal]="true" header="Quantity of Products" [(visible)]="quantityDialog" [style]="{width: 'auto'}">
+        <p-inputNumber [(ngModel)]="quantity"></p-inputNumber>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="updateQuantity()" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
+    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="line-spin-clockwise-fade-rotating"
+        [fullScreen]="true">
+        <p style="color: white"> Loading... </p>
+    </ngx-spinner>
+</div>

@@ -100,7 +100,8 @@ export class OfferComponent {
     }
 
     getProducts() {
-        this.productService.getProducts().subscribe((data: Product[]) => {
+        const userId = localStorage.getItem('id');
+        this.productService.getProducts({ 'id': userId}).subscribe((data: Product[]) => {
             this.products = data;
             console.log(this.products);
         });
@@ -157,7 +158,8 @@ export class OfferComponent {
     }
 
     getClients() {
-        this.clientService.getClients().subscribe((data: Client[]) => {
+        const userId = localStorage.getItem('id');
+        this.clientService.getClients({ 'id': userId }).subscribe((data: Client[]) => {
             this.clients = data;
             console.log(this.clients);
         });

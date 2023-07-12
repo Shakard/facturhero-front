@@ -39,19 +39,19 @@ export class ProductService {
             .then(data => data);
     }
 
-    getProducts(): Observable<Product[]> {
-        return this.http.get<Product[]>(this.url + 'products')
+    getProducts(id: any): Observable<Product[]> {
+        return this.http.post<Product[]>(this.url + 'auth/products', id)
     }
 
     createProduct(product: any): Observable<Product> {
-        return this.http.post<Product>(this.url + 'add-product', JSON.stringify(product), this.httpOptions)
+        return this.http.post<Product>(this.url + 'auth/add-product', JSON.stringify(product), this.httpOptions)
     }
 
     updateProduct(id: any, product: any): Observable<Product> {
-        return this.http.put<Product>(this.url + 'edit-product/' + id, JSON.stringify(product), this.httpOptions)
+        return this.http.put<Product>(this.url + 'auth/edit-product/' + id, JSON.stringify(product), this.httpOptions)
     }
 
     deleteProduct(id: any) {
-        return this.http.delete<Product>(this.url + 'delete-product/' + id, this.httpOptions)
+        return this.http.delete<Product>(this.url + 'auth/delete-product/' + id, this.httpOptions)
     }
 }
