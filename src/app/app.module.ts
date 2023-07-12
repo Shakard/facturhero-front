@@ -40,6 +40,9 @@ import { CarouselModule } from 'primeng/carousel';
 import { InvoiceTemplateService } from './demo/service/invoice-template.service';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { ProvinceService } from './demo/service/province.service';
+import { TagModule } from 'primeng/tag';
+
+
 
 
 
@@ -78,7 +81,8 @@ import { ProvinceService } from './demo/service/province.service';
         FileUploadModule,
         TooltipModule,
         CarouselModule,
-        SweetAlert2Module
+        SweetAlert2Module,
+        TagModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

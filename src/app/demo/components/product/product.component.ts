@@ -45,10 +45,11 @@ export class ProductComponent {
     buildFormProduct() {
         this.formProduct = new FormGroup({
             userId: new FormControl(localStorage.getItem('id')),
-            code: new FormControl('', Validators.required),
+            // code: new FormControl('', Validators.required),
             item: new FormControl('', Validators.required),
             quantity: new FormControl('', Validators.required),
-            price: new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$")])
+            price: new FormControl('')
+            // price: new FormControl('', [Validators.required, Validators.pattern("^[0-9]*\.[0-9]{2}$")])
         });
     }
 

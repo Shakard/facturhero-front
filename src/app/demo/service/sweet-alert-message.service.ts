@@ -27,7 +27,17 @@ export class SweetAlertMessageService {
 
     error(error:any) {
         return Swal.fire({
-            title: error,
+            title: "<h4 style='color:red'>" + error + "</h4>",
+            showCancelButton: false,
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#0B253A",
+        });
+    }
+
+    errorWithDetail(title:any, detail:any) {
+        return Swal.fire({
+            title: title,
+            text: detail,
             showCancelButton: false,
             confirmButtonText: "Ok",
             confirmButtonColor: "#0B253A",

@@ -13,8 +13,8 @@
                 <form class="form-signin" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                     <!-- <label for="userLogo" class="block text-900 text-xl font-medium mb-2">Logo</label> -->
                     <img style="max-width: 125px;" id="userLogo"
-                        src='{{ "http://www.facturhero.com/invoice-backend/public/logos/" + this.user?.logo}}' alt="No logo " />
-                    <p-fileUpload #fileUpload mode="basic" chooseLabel="Browse logo" [customUpload]="true" accept="image/*"
+                        src='{{ "http://localhost/invoice-backend/public/logos/" + this.user?.logo}}' alt="No logo " />
+                    <p-fileUpload #fileUpload mode="basic" chooseLabel="Browse logo (optional)" [customUpload]="true" accept="image/*"
                         (uploadHandler)="chooseLogo($event, fileUpload)" [auto]="true">
                     </p-fileUpload><br>
                     {{logoName}}
@@ -85,7 +85,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="web-page" class="block text-900 text-xl font-medium mb-2">Web page</label>
+                            <label for="web-page" class="block text-900 text-xl font-medium mb-2">Web page (optional)</label>
                             <input id="web-page" type="text" formControlName="userWeb" placeholder="Web page" pInputText
                                 class="w-full md:w-30rem " style="padding:1rem">
                         </div>
@@ -154,12 +154,12 @@
                             </div>
                         </div><br>
                         <div class="form-group">
-                            <input id="address2" type="text" formControlName="addressDetail" placeholder="Line 2"
+                            <input id="address2" type="text" formControlName="addressDetail" placeholder="Line 2 (optional)"
                                 pInputText class="w-full md:w-20rem " style="padding:1rem">
                         </div>
                         <br>
                         <div class="form-group">
-                            <input type="text" formControlName="zipCode" placeholder="ZIP Code" pInputText
+                            <input type="text" formControlName="zipCode" placeholder="ZIP Code (optional)" pInputText
                                 class="w-full md:w-20rem " style="padding:1rem">
                         </div>
                         <br><br>

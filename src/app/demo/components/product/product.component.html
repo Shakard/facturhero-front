@@ -3,7 +3,8 @@
         <ng-template pTemplate="left">
             <!-- <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
                 (click)="openNew()"></button> -->
-            <button pButton pRipple label="Add product" icon="pi pi-plus" class="w-full p-3 text-md" (click)="openNew()"></button>
+            <button pButton pRipple label="Add product" icon="pi pi-plus" class="w-full p-3 text-md"
+                (click)="openNew()"></button>
             <!-- <button pButton pRipple icon="pi pi-trash" class="p-button-danger"></button> -->
         </ng-template>
     </p-toolbar>
@@ -36,8 +37,11 @@
                 <td>{{product.cantidad}}</td>
                 <td>{{product.precio_venta}}</td>
                 <td>
-                    <button pButton pRipple icon="pi pi-pencil" style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2" (click)="openEditProduct(product)"></button>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded"(click)="deleteProduct(product)"></button>
+                    <button pButton pRipple icon="pi pi-pencil"
+                        style="background-color: #0B253A; border-color: #0B253A;" class="p-button-rounded mr-2"
+                        (click)="openEditProduct(product)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded"
+                        (click)="deleteProduct(product)"></button>
                 </td>
             </tr>
         </ng-template>
@@ -55,28 +59,28 @@
         <form [formGroup]="formProduct" (ngSubmit)="submit()">
             <br>
 
-                <span class="p-float-label">
+            <!-- <span class="p-float-label">
                     <input id="float-input" type="text" pInputText formControlName="code">
                     <label for="float-input">Code</label>
-                </span>
+                </span> -->
 
-               <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="item">
-                    <label for="float-input">Product Name</label>
-                </span>
-
-                <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="quantity">
-                    <label for="float-input">Quantity</label>
-                </span>
-
-               <br>
-                <span class="p-float-label">
-                    <input id="float-input" type="text" pInputText formControlName="price">
-                    <label for="float-input">Price</label>
-                </span>
+            <br>
+            <span class="flex-auto">
+                <label for="float-input">Product Name</label>
+                <input id="float-input" type="text" pInputText formControlName="item">
+            </span>
+            <br><br>
+            <span class="flex-auto">
+                <label for="float-input">Quantity</label>
+                <p-inputNumber formControlName="quantity" [showButtons]="true"></p-inputNumber>
+                <!-- <input id="float-input" type="text" pInputText formControlName="quantity"> -->
+            </span>
+            <br><br>
+            <span class="flex-auto">
+                <label for="float-input">Price Net</label>
+                <p-inputNumber formControlName="price" inputId="locale-us" mode="decimal" locale="en-US"
+                    [minFractionDigits]="2"> </p-inputNumber>
+            </span>
 
             <!-- <button class="btn btn-primary" type="submit" [disabled]="!formProduct.valid">Save</button> -->
         </form>
@@ -84,6 +88,7 @@
 
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()" [disabled]="!formProduct.valid"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()"
+            [disabled]="!formProduct.valid"></button>
     </ng-template>
 </p-dialog>

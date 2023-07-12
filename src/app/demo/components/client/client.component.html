@@ -45,7 +45,7 @@
                         <br>
                         <span class="p-float-label">
                             <input id="float-input" type="text" pInputText formControlName="phone">
-                            <label for="float-input">Phone Number</label>
+                            <label for="float-input">Phone Number (optional)</label>
                         </span>
 
                         <br>
@@ -152,11 +152,11 @@
                         <span class="p-float-label">
                             <input id="address2" type="text" pInputText formControlName="addressDetail"
                                 placeholder="Address details">
-                            <label for="float-input">Line 2</label>
+                            <label for="float-input">Line 2 (optional)</label>
                         </span><br>
                         <span class="p-float-label">
                             <input id="zip" type="text" pInputText formControlName="zipCode" placeholder="ZIP Code">
-                            <label for="float-input">Zip Code</label>
+                            <label for="float-input">Zip Code (optional)</label>
                         </span>
                         <!-- <button class="btn btn-primary" type="submit" [disabled]="!formProduct.valid">Save</button> -->
                     </form>
@@ -164,8 +164,7 @@
 
                 <ng-template pTemplate="footer">
                     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"></button>
-                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()"
-                        [disabled]="!formClient.valid"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="submit()"></button>
                 </ng-template>
             </p-dialog>
 
@@ -187,17 +186,19 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th style="min-width:15rem">Identification </th>
-                <th style="min-width:15rem">Name or Business </th>
-                <th style="min-width:15rem">Phone </th>
-                <th style="min-width:15rem">City </th>
-                <th style="min-width:15rem">Address </th>
-                <th style="min-width:15rem">Email </th>
+                <th >Customer ID</th>
+                <th >Identification </th>
+                <th >Name or Business </th>
+                <th >Phone </th>
+                <th >City </th>
+                <th >Address </th>
+                <th >Email </th>
                 <th></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-client>
             <tr [pSelectableRow]="client">
+                <td>{{client.id}}</td>
                 <td>{{client.identificacion}}</td>
                 <td>{{client.razon_social}}</td>
                 <td>{{client.telefono}}</td>

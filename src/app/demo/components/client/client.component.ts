@@ -8,6 +8,7 @@ import { ProvinceService } from '../../service/province.service';
 import { Invoice } from '../../api/invoice';
 import { InvoiceService } from '../../service/invoice.service';
 import { Router } from '@angular/router';
+import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
 
 interface TypeOfId {
     name: string;
@@ -39,7 +40,9 @@ export class ClientComponent {
 
     formClient: FormGroup;
 
-    constructor(private clientService: ClientService, private provinceService: ProvinceService, private invoiceService: InvoiceService, public router: Router) { }
+    constructor(private clientService: ClientService, private provinceService: ProvinceService, private invoiceService: InvoiceService, public router: Router,
+        private messageService: SweetAlertMessageService
+        ) { }
 
     ngOnInit() {
         this.getClients();
@@ -82,7 +85,7 @@ export class ClientComponent {
             identification: new FormControl('', Validators.required),
             name: new FormControl('', Validators.required),
             phone: new FormControl(''),
-            country: new FormControl('', Validators.required),
+            country: new FormControl(null, Validators.required),
             province: new FormControl('', Validators.required),
             canton: new FormControl('', Validators.required),
             address: new FormControl('', Validators.required),
@@ -150,7 +153,6 @@ export class ClientComponent {
     }
 
     newClient() {
-        this.formClient.patchValue({ country: 'ECUADOR' });
         this.formClient.patchValue({ userId: this.userId });
         console.log(this.formClient.value);
         this.clientService.createClient(this.formClient.value).subscribe(res => {
@@ -170,19 +172,27 @@ export class ClientComponent {
             this.formClient.reset();
             this.hideDialog();
             this.successAlert();
+            this.clientId=null;
         })
     }
 
     submit() {
-        if (this.clientId) {
-            console.log('cliente actualizado');
-
-            this.editClient();
+        if (!this.formClient.get('country').value) {
+            this.formClient.patchValue({ country: 'ECUADOR' });
         }
-        else {
-            console.log('cliente creado');
-
-            this.newClient();
+        if (this.formClient.valid) {
+            if (this.clientId) {
+                console.log('cliente actualizado');
+                this.editClient();
+            }
+            else {
+                console.log('cliente creado');
+                this.newClient();
+            }
+        }
+        else{
+            console.log('Formulario no validado');
+            this.messageService.error('Please check all the fields');
         }
     }
 
@@ -278,7 +288,7 @@ export class ClientComponent {
     }
 
       openPreviewPDF(route:any) {
-        window.open('http://www.facturhero.com/invoice-backend/public/'+ route, '_blank');
+        window.open('http://localhost/invoice-backend/public/'+ route, '_blank');
       }
 
       editInvoice(certificate: any){

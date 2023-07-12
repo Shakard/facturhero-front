@@ -12,6 +12,7 @@ export class AppTopBarComponent {
 
     items!: MenuItem[];
     profileItems!: MenuItem[];
+    user: any;
 
     @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -23,6 +24,7 @@ export class AppTopBarComponent {
 
     ngOnInit() {
         this.profileMenuItems();
+        this.getLoggedUser();
     }
 
     profileMenuItems() {
@@ -40,6 +42,14 @@ export class AppTopBarComponent {
                 }
             },
         ];
+    }
+
+    getLoggedUser() {
+        this.authService.getLoggedUser()
+            .subscribe(response => {
+                const res: any = response;
+                this.user = res.data;
+            });
     }
 
     logout() {

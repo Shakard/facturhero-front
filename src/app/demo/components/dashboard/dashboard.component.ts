@@ -12,7 +12,6 @@ import { CurrencyPipe } from '@angular/common';
 import { Client } from '../../api/client';
 import { ClientService } from '../../service/client.service';
 import Swal from 'sweetalert2';
-import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -30,8 +29,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     certificates: any[];
     chartInvoices: any[];
     clients: Client[];
+    revenue: any;
 
-    constructor(private productService: ProductService, public layoutService: LayoutService, private authService: AuthService, private invoiceService: InvoiceService, private clientService: ClientService, private messageService: SweetAlertMessageService) {
+    constructor(private productService: ProductService, public layoutService: LayoutService, private authService: AuthService, private invoiceService: InvoiceService, private clientService: ClientService) {
         this.subscription = this.layoutService.configUpdate$.subscribe(() => {
             this.initChart();
         });
@@ -111,7 +111,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.invoiceService.getChartInvoices().subscribe((data: Invoice[]) => {
             this.chartInvoices = data;
             this.createChartData();
-            // console.log(this.chartInvoices);
         });
     }
 
@@ -132,17 +131,48 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.user = res.data;
                 this.getChartInvoices();
                 this.getInvoices();
-                if (!this.user.signature) {
-                    this.showKeyMessage();
-                }
             });
     }
 
     getInvoices() {
         this.invoiceService.getCertificates(this.user.id).subscribe((data: Invoice[]) => {
             this.certificates = data;
-            // console.log(this.certificate);
+            this.getRevenue();
         });
+    }
+
+    getDetailsTotal(details: any) {
+        var total = 0;
+        var tax = 0;
+        for (let i = 0; i < details.length; i++) {
+            const price = details[i]['price'];
+            const quantity = details[i]['quantity'];
+            const discount = details[i]['discount'] / 100;
+            const subtotal = price * quantity;
+            const itotal = subtotal - (discount * subtotal);
+            total = total + itotal;
+        }
+        for (let i = 0; i < details.length; i++) {
+            const price = details[i]['price'];
+            const quantity = details[i]['quantity'];
+            const discount = details[i]['discount'] / 100;
+            const subtotal1 = price * quantity;
+            const subtotal = subtotal1 - (discount * subtotal1);
+            const itax = subtotal * ((details[i]['tax']) / 100);
+            tax = tax + itax;
+        }
+        const grandTotal = total + tax;
+        return grandTotal;
+    }
+
+    getRevenue(){
+        var grandTotal = 0;
+         this.certificates.forEach(element => {
+            var total = this.getDetailsTotal(element.certificate_details)
+            grandTotal = grandTotal + total;
+         });
+         console.log(grandTotal);
+         this.revenue = grandTotal;
     }
 
     getClients() {
@@ -158,9 +188,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.subscription.unsubscribe();
             Swal.close();
         }
-    }
-
-    showKeyMessage() {
-        this.messageService.error('To be able to create invoices, please upload a signature key to your <a href="/#/profile">profile</a>');
     }
 }

@@ -5,6 +5,7 @@ import { AuthService } from '../../service/auth.service';
 import Swal from 'sweetalert2';
 import { Province } from '../../api/province';
 import { ProvinceService } from '../../service/province.service';
+import { SweetAlertMessageService } from '../../service/sweet-alert-message.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -26,7 +27,8 @@ export class UserProfileComponent {
         public router: Router,
         public fb: FormBuilder,
         public authService: AuthService,
-        private provinceService: ProvinceService
+        private provinceService: ProvinceService,
+        private messageService: SweetAlertMessageService,
     ) {
         this.registerForm = this.fb.group({
             id: [''],
@@ -35,7 +37,7 @@ export class UserProfileComponent {
             name: [null, Validators.required],
             email: [null, [Validators.email, Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
             userRuc: [null, [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9.]+$')]],
-            userWeb: [null],
+            userWeb: [''],
             phone: [null, Validators.required],
             address: [null, Validators.required],
             country: ['ECUADOR'],
@@ -94,7 +96,9 @@ export class UserProfileComponent {
                 console.log(result);
             },
             (error) => {
-                this.errors = error.error;
+                // this.spinner.hide();
+                this.messageService.error(error.error.message);
+
             },
             () => {
                 this.getLoggedUser();

@@ -28,8 +28,8 @@ export class InvoiceService {
         return this.http.get<Invoice[]>(this.URL + 'auth/chart-certificates')
     }
 
-    getInvoiceSerial(): Observable<any> {
-        return this.http.get(this.URL + 'auth/secuencial');
+    getInvoiceSerial(data: any): Observable<any> {
+        return this.http.post(this.URL + 'auth/secuencial', data);
     }
 
     createInvoiceXML(data: any): Observable<any> {
@@ -46,6 +46,10 @@ export class InvoiceService {
 
     updateCertificate(data:any): Observable<any> {
         return this.http.put(this.URL + 'auth/edit-certificate', data);
+    }
+
+    updatePaidStatus(data:any): Observable<any> {
+        return this.http.put(this.URL + 'auth/edit-paid', data);
     }
 
     // getInvoicesByClient(id:any): Observable<Invoice[]> {

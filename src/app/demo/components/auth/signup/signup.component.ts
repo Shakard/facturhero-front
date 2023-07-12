@@ -22,7 +22,7 @@ export class SignupComponent implements OnInit {
     errors: any = null;
     provinces: Province[];
     cantons: any[];
-    dropDownCities:any = [];
+    dropDownCities: any = [];
     province: Province;
     submitted: boolean = false;
     cities!: any[];
@@ -64,7 +64,7 @@ export class SignupComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
-        if(this.registerForm.valid){
+        if (this.registerForm.valid) {
             const formData = new FormData();
             formData.append("firstName", this.registerForm.controls['firstName'].value);
             formData.append("lastName", this.registerForm.controls['lastName'].value);
@@ -91,12 +91,14 @@ export class SignupComponent implements OnInit {
                 (error) => {
                     this.errors = error.error;
                     console.log(this.errors.email);
-                    if (this.errors.email) {
-                            this.errors.email.forEach((emailError: any) => {
-                                var error = emailError;
-                                this.messageService.error(error);
-                            });
-                        }
+                    if (this.errors.message) {
+                        this.messageService.error(error.error.message);
+                    }else if (this.errors.email) {
+                        this.errors.email.forEach((emailError: any) => {
+                            var error = emailError;
+                            this.messageService.error(error);
+                        });
+                    }
                 },
                 () => {
                     this.registerForm.reset();
@@ -104,10 +106,10 @@ export class SignupComponent implements OnInit {
                     this.router.navigate(['login']);
                 }
             );
-          }else{
+        } else {
             console.log('Formulario no validado');
             this.messageService.error('Please check all the fields');
-          }
+        }
     }
     changeSignatureKey(event: any) {
         const file = (event.target as HTMLInputElement)?.files?.[0];
@@ -176,13 +178,13 @@ export class SignupComponent implements OnInit {
 
     getCantons(provincia: string) {
         this.provinceService.getProvinces().then((res: any) => {
-            this.cantons = res.data!.filter((data:any) => data.provincia == provincia);
+            this.cantons = res.data!.filter((data: any) => data.provincia == provincia);
             if (this.cantons[0]) {
                 this.cantons = this.cantons[0].cantones;
                 console.log(this.cantons);
             }
 
-      });
+        });
     }
 
     onChangeCanton(canton: string) {

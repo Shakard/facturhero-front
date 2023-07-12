@@ -76,7 +76,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="web-page" class="block text-900 text-xl font-medium mb-2">Web page</label>
+                            <label for="web-page" class="block text-900 text-xl font-medium mb-2">Web page (optional)</label>
                             <input id="web-page" type="text" formControlName="userWeb" placeholder="Web page" pInputText
                                 class="w-full md:w-30rem " style="padding:1rem">
                         </div>
@@ -148,11 +148,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input id="address2" type="text" formControlName="addressDetail" placeholder="Line 2"
+                                <input id="address2" type="text" formControlName="addressDetail" placeholder="Line 2 (optional)"
                                     pInputText class="w-full md:w-20rem " style="padding:1rem">
                             </div>
                             <div class="form-group">
-                                <input type="text" formControlName="zipCode" placeholder="ZIP Code" pInputText
+                                <input type="text" formControlName="zipCode" placeholder="ZIP Code (optional)" pInputText
                                     class="w-full md:w-20rem " style="padding:1rem">
                             </div>
                         </p-card>
@@ -190,7 +190,7 @@
                             </ng-container>
                         </div>
                         <div class="flex align-items-center justify-content-between  gap-5">
-                            <a routerLink="/login" class="font-medium no-underline ml-2 text-right cursor-pointer"
+                            <a routerLink="/auth/login" class="font-medium no-underline ml-2 text-right cursor-pointer"
                                 style="color: var(--primary-color)">Already have an account? Sign in instead.</a>
                         </div>
                         <button pButton pRipple label="Sign Up" type="submit" class="w-full p-3 text-xl"></button>
